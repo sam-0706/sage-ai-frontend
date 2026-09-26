@@ -11,7 +11,7 @@ reuses these web modules; the Flutter mobile app consumes the same backend API.
 ```
 cp .env.example .env
 VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
-VITE_API_BASE_URL=https://<sage-ai-backend-domain>
+VITE_API_BASE_URL=https://sage-ai-backend-hazel.vercel.app
 ```
 
 Never put secret keys (Clerk secret, OpenAI, Razorpay secret, Supabase service role) in this repo — they live only on the backend.
