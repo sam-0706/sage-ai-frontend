@@ -77,6 +77,7 @@ export interface DeckSummary {
 export type Readiness = 'not_ready' | 'developing' | 'nearly_ready' | 'ready'
 
 export interface Deck extends Omit<DeckSummary, 'due_now' | 'learned' | 'last_score' | 'last_readiness'> {
+  coach_kind?: 'study' | 'interview'
   summary: string
   key_concepts: { name: string; explanation: string }[]
   quick_tips: string[]

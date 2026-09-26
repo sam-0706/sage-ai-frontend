@@ -4,7 +4,7 @@ import { useSage } from '@/sage/state'
 import { Button, Card, Spinner } from '@/components/ui'
 import { BrandMark } from '@/components/Brand'
 
-export function SignIn() {
+export function SignIn({ onDemo }: { onDemo: () => void }) {
   const { auth, setAuth } = useSage()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -39,6 +39,7 @@ export function SignIn() {
           </div>
         </div>
 
+        <Button className="mt-6 w-full" variant="outline" onClick={onDemo}>Explore BITSoM 2026 demo</Button>
         {auth?.status === 'offline' ? (
           <div className="mt-8 space-y-4">
             <div className="flex items-start gap-3 rounded-[var(--radius-input)] bg-warning/10 p-4 text-sm text-warning">
@@ -68,13 +69,13 @@ export function SignIn() {
         ) : (
           <div className="mt-8 space-y-5">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              SAGE AI is in an invite-only beta. Sign in securely in your browser with the email you used to join the waitlist.
+              SAGE AI is in an invite-only beta. Sign in securely with Clerk in your browser with the email you used to join the waitlist.
             </p>
             {(reason || error) && (
               <p className="rounded-[var(--radius-input)] bg-destructive/10 p-3 text-sm text-destructive" role="alert">{error || reason}</p>
             )}
             <Button size="lg" className="w-full" loading={busy} onClick={start}>
-              <KeyRound className="h-4 w-4" /> Sign in with browser
+              <KeyRound className="h-4 w-4" /> Sign in with Clerk
             </Button>
             <p className="flex items-center gap-2 text-[11px] text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 text-success" /> Your session is stored in the OS keychain on this device.

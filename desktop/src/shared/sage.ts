@@ -6,7 +6,10 @@ export type SageAuthState =
   | { status: 'signed_in'; email: string; name?: string; dev?: boolean }
   | { status: 'offline'; reason?: string }
 
+export interface AutaImportReport { imported_at: string; source_project: string; source_data: string; counts: Record<string, number>; browser: string; secrets: string; backup: string }
+
 export interface SageApi {
+  importReport: () => Promise<AutaImportReport | null>
   authStatus: () => Promise<SageAuthState>
   signIn: () => Promise<SageAuthState>
   cancelSignIn: () => Promise<SageAuthState>

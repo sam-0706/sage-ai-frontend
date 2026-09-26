@@ -1,3 +1,6 @@
+import { readFileSync, existsSync } from 'fs'
+import { join } from 'path'
+import { dataDir } from '../store/paths'
 import { ipcMain, shell, type BrowserWindow } from 'electron'
 import { apiBase, authEvents, authStatus, cancelSignIn, sageRequest, SageApiError, signOut, startSignIn } from './client'
 
@@ -16,6 +19,7 @@ const ALLOWED_METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 
 export function registerSageIpc(getWindow: () => BrowserWindow | null): void {
   authEvents.on((s) => getWindow()?.webContents.send('evt:sage-auth', s))
+  ipcMain.handle('sage:importReport', () => wrap(async () => { const p = join(dataDir(), 'auta-import.json'); return existsSync(p) ? JSON.parse(readFileSync(p, 'utf8')) : null }))
   ipcMain.handle('sage:authStatus', () => wrap(authStatus))
   ipcMain.handle('sage:signIn', () => wrap(startSignIn))
   ipcMain.handle('sage:cancelSignIn', () => wrap(async () => cancelSignIn()))

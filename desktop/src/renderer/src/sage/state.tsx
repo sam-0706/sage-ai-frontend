@@ -6,6 +6,7 @@ interface SageState {
   auth: SageAuthState | null
   me: Me | null
   onboarded: boolean | null
+  loadingError: string
   refreshMe: () => Promise<void>
   setAuth: (s: SageAuthState) => void
 }
@@ -13,17 +14,19 @@ interface SageState {
 const Ctx = createContext<SageState | null>(null)
 
 export function SageProvider({ children }: { children: ReactNode }) {
+  const [loadingError, setLoadingError] = useState('')
   const [auth, setAuth] = useState<SageAuthState | null>(null)
   const [me, setMe] = useState<Me | null>(null)
   const [onboarded, setOnboarded] = useState<boolean | null>(null)
 
   const refreshMe = useCallback(async () => {
+    setLoadingError('')
     try {
       const [m, ob] = await Promise.all([api.get<Me>('/v1/me'), api.get<{ completed: boolean }>('/v1/onboarding')])
       setMe(m)
       setOnboarded(ob.completed)
-    } catch {
-      /* auth listener handles 401; transient errors keep last state */
+    } catch (e) {
+      setLoadingError(e instanceof Error ? e.message : 'Account setup failed. Please retry.')
     }
   }, [])
 
@@ -40,7 +43,7 @@ export function SageProvider({ children }: { children: ReactNode }) {
     }
   }, [auth?.status, refreshMe])
 
-  return <Ctx.Provider value={{ auth, me, onboarded, refreshMe, setAuth }}>{children}</Ctx.Provider>
+  return <Ctx.Provider value={{ auth, me, onboarded, loadingError, refreshMe, setAuth }}>{children}</Ctx.Provider>
 }
 
 export function useSage(): SageState {

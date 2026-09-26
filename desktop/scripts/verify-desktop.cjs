@@ -1,0 +1,48 @@
+const { _electron: electron } = require('playwright');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+(async () => {
+ const start = Date.now();
+ const app = await electron.launch({...(process.env.SAGE_TEST_PACKAGED ? {executablePath:'release/mac-arm64/SAGE AI.app/Contents/MacOS/SAGE AI',args:[]} : {args:['.']}),env:{...process.env,SAGE_DEV_EMAIL:''}});
+ try {
+ const page = await app.firstWindow();
+ await page.getByRole('button',{name:'Explore BITSoM 2026 demo'}).waitFor();
+ console.log('Sign-in rendered in',Date.now()-start,'ms');
+ const errors=[]; page.on('pageerror',e=>errors.push(e.message));
+ await page.getByRole('button',{name:'Explore BITSoM 2026 demo'}).click();
+ await page.getByText('Korada · Demo attendance', {exact:false}).waitFor();
+ await page.getByRole('button',{name:'Reset demo attendance'}).click();
+ assert(await page.getByText('92/120',{exact:false}).count());
+ await page.getByRole('button',{name:'Demo: attended',exact:true}).first().click();
+ assert(await page.getByText('93/121',{exact:false}).count());
+ await page.getByRole('combobox').selectOption('80');
+ assert(await page.getByText('Attend the next 19 classes',{exact:false}).count());
+ fs.mkdirSync('artifacts',{recursive:true});
+ await page.locator('main > div').evaluate(el => el.scrollTop = 0);
+ await page.screenshot({path:'artifacts/attendance.png'});
+ await page.getByRole('button',{name:'Cue cards & quiz',exact:true}).click();
+ assert(await page.getByText('Segmentation divides a market',{exact:false}).count());
+ await page.getByRole('button',{name:'Quiz',exact:true}).click();
+ assert.equal(await page.getByText('Segmentation divides a market',{exact:false}).count(),0);
+ await page.getByRole('button',{name:'Reveal answer',exact:true}).click();
+ await page.getByRole('button',{name:'Needs review',exact:true}).click();
+ await page.getByRole('button',{name:'Reveal answer',exact:true}).click();
+ await page.getByRole('button',{name:'Got it',exact:true}).click();
+ await page.getByText('Quiz complete · 1/2 marked understood',{exact:true}).waitFor();
+ await page.getByRole('combobox').last().selectOption('review');
+ assert.equal(await page.getByText('What are the four Ps?',{exact:true}).count(),0);
+ await page.screenshot({path:'artifacts/quiz.png'});
+ await page.getByRole('button',{name:'Real AutA data',exact:true}).click();
+ await page.getByText('Real AutA import',{exact:true}).waitFor();
+ const counts = await page.evaluate(async()=>({profile:!!await window.auta.getProfile(), applications:(await window.auta.listApplications()).length, report:await window.sage.importReport()}));
+ const connections = await page.evaluate(async () => { const g = await window.auta.gmailStatus(); const b = await window.auta.browserIdentityStatus(); return {googleClientConfigured:g.clientConfigured, gmailConnected:g.connected, browserReady:b.ready} });
+ console.log('Connection metadata:', connections);
+ assert(counts.profile); assert(counts.applications >= counts.report.counts.applications); assert.equal(counts.report.counts.jobs,11);
+ await page.screenshot({path:'artifacts/auta-import.png'});
+ await page.getByRole('button',{name:'Clerk sign-in',exact:true}).click();
+ await page.getByRole('button',{name:'Sign in with Clerk',exact:true}).waitFor();
+ assert.deepEqual(errors,[]);
+ console.log('PASS: attendance calculation/update, Q&A, quiz/review filter, actual imported profile and history, Clerk entry point; no renderer errors');
+ } finally { await app.close(); }
+})().catch(e=>{console.error(e);process.exitCode=1});

@@ -64,7 +64,7 @@ export function AutaProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     ;(async () => {
-      await Promise.all([refresh(), refreshProfile(), refreshSettings()])
+      await Promise.allSettled([refresh(), refreshProfile(), refreshSettings()])
       setReady(true)
     })()
 

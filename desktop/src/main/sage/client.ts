@@ -29,11 +29,26 @@ export class SageApiError extends Error {
   }
 }
 
-export async function sageRequest<T = unknown>(method: string, path: string, body?: unknown, timeoutMs = 120_000): Promise<T> {
+const pendingReads = new Map<string, Promise<unknown>>()
+let meResult: { key: string; data: unknown; at: number } | null = null
+export function sageRequest<T = unknown>(method: string, path: string, body?: unknown, timeoutMs?: number): Promise<T> {
+  const key = `${apiBase()}:${devEmail() || sessionToken() || 'anonymous'}:${path}`
+  if (method !== 'GET') { meResult = null; return requestUncached<T>(method, path, body, timeoutMs) }
+  if (path === '/v1/me' && meResult?.key === key && Date.now() - meResult.at < 3000) return Promise.resolve(meResult.data as T)
+  if (pendingReads.has(key)) return pendingReads.get(key) as Promise<T>
+  const request = requestUncached<T>(method, path, body, timeoutMs).then(data => {
+    if (path === '/v1/me') meResult = { key, data, at: Date.now() }
+    return data
+  }).finally(() => pendingReads.delete(key))
+  pendingReads.set(key, request)
+  return request
+}
+
+async function requestUncached<T = unknown>(method: string, path: string, body?: unknown, timeoutMs = method === 'GET' ? 20_000 : 120_000): Promise<T> {
   if (!path.startsWith('/v1/')) throw new SageApiError('Only /v1 API paths are allowed', 400, 'invalid_path')
   const headers: Record<string, string> = { Accept: 'application/json' }
-  const dev = devEmail()
   const token = sessionToken()
+  const dev = token ? null : devEmail()
   if (dev) headers['X-Dev-User-Email'] = dev
   else if (token) headers.Authorization = `Bearer ${token}`
   if (body !== undefined) headers['Content-Type'] = 'application/json'
@@ -77,7 +92,7 @@ export async function authStatus(): Promise<SageAuthState> {
   if (!devEmail() && !sessionToken()) return { status: 'signed_out' }
   try {
     const me = await sageRequest<{ user: { email: string; full_name: string | null } }>('GET', '/v1/me', undefined, 20_000)
-    return { status: 'signed_in', email: me.user.email, name: me.user.full_name ?? undefined, dev: !!devEmail() }
+    return { status: 'signed_in', email: me.user.email, name: me.user.full_name ?? undefined, dev: !sessionToken() && !!devEmail() }
   } catch (e) {
     if (e instanceof SageApiError && (e.status === 401 || e.status === 403)) {
       if (e.status === 401) deleteSecret(TOKEN_SECRET)

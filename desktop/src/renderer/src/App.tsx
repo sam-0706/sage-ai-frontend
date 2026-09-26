@@ -5,8 +5,9 @@ import { useAuta } from '@/state'
 import { useSage } from '@/sage/state'
 import { SignIn } from '@/routes/SignIn'
 import { SageOnboarding } from '@/routes/SageOnboarding'
-import { Home } from '@/routes/Home'
+import { Campus, CampusProvider, Pricing } from '@/routes/Campus'
 import { ExamPrep } from '@/routes/ExamPrep'
+import { Academics, BitsomPrep } from '@/routes/Academics'
 import { Ask } from '@/routes/Ask'
 import { AutoApply } from '@/routes/AutoApply'
 import { Account } from '@/routes/Account'
@@ -15,49 +16,46 @@ import { Brand, BrandMark } from '@/components/Brand'
 import { Badge, Button, Spinner } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
-type View = 'home' | 'exam' | 'ask' | 'apply' | 'settings'
+type View = string
 
 export function App() {
-  const { auth, me, onboarded } = useSage()
+  const { auth, me, onboarded, loadingError, refreshMe, setAuth } = useSage()
   const { ready, applications, checkpoints } = useAuta()
+  const [demoMode, setDemoMode] = useState(false)
   const [view, setView] = useState<View>('home')
   const [editOnboarding, setEditOnboarding] = useState(false)
   const reduceMotion = useReducedMotion()
 
+  if (demoMode) return <div className="flex h-full"><aside className="flex w-56 shrink-0 flex-col gap-3 bg-card p-4 pt-10"><Brand /><Badge tone="warning">BITSoM 2026 demo</Badge><Button variant="outline" onClick={() => setView('home')}>Attendance & timetable</Button><Button variant="outline" onClick={() => setView('exam')}>Cue cards & quiz</Button><Button variant="outline" onClick={() => setView('apply')}>Real AutA data</Button><Button className="mt-auto" onClick={() => setDemoMode(false)}>Clerk sign-in</Button></aside><main className="min-w-0 flex-1">{view === 'exam' ? <BitsomPrep /> : view === 'apply' ? <AutoApply /> : <div className="h-full overflow-auto p-8 pt-12"><Academics /></div>}</main></div>
   if (!auth || !ready || (auth.status === 'signed_in' && (me === null || onboarded === null))) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3">
         <BrandMark size="lg" />
-        <Spinner className="h-5 w-5 text-primary" />
+        {loadingError ? <><p role="alert" className="max-w-md text-sm text-destructive">{loadingError}</p><Button onClick={() => void refreshMe()}>Retry account loading</Button><Button variant="outline" onClick={async () => setAuth(await window.sage.signOut())}>Return to Clerk sign-in</Button></> : <><Spinner className="h-5 w-5 text-primary" /><p className="text-sm text-muted-foreground">Loading your account…</p></>}
       </div>
     )
   }
-  if (auth.status !== 'signed_in') return <SignIn />
+  if (auth.status !== 'signed_in') return <SignIn onDemo={() => setDemoMode(true)} />
   if (!onboarded || editOnboarding) return <SageOnboardingGate onDone={() => setEditOnboarding(false)} />
 
   const agentBusy = applications.filter((a) => a.status === 'running' || a.status === 'paused_checkpoint').length
-  const nav: { id: View; label: string; icon: React.ReactNode; badge?: number }[] = [
-    { id: 'home', label: 'Home', icon: <HomeIcon className="h-4 w-4" /> },
-    { id: 'exam', label: 'Exam prep', icon: <Layers className="h-4 w-4" /> },
-    { id: 'ask', label: 'Ask SAGE', icon: <MessageCircle className="h-4 w-4" /> },
-    { id: 'apply', label: 'Auto apply', icon: <Send className="h-4 w-4" />, badge: agentBusy || undefined },
-    { id: 'settings', label: 'Settings', icon: <SettingsIcon className="h-4 w-4" /> }
+  const groups = [
+    {label:'Overview',items:[['home','Home dashboard'],['pricing','Plans & pricing']]},
+    {label:'Placements',items:[['jobs','On-campus jobs'],['apply','Auto-Apply'],['interview','Interview AI']]},
+    {label:'Attendance',items:[['timetable','Timetable & calendar'],['attendance','Attendance calculator'],['class_recommendations','Class priorities']]},
+    {label:'Semester planner',items:[['semester','Create a plan'],['progress','Daily progress'],['activity','Activity planner']]},
+    {label:'Pending work',items:[['assignments','Assignments'],['fees','Fees']]},
+    {label:'Exam prep',items:[['exam','Quick Notes'],['study','Study AI'],['library','Demo cue-card library']]},
+    {label:'Exposure',items:[['internships','Internships'],['workshops','Workshops'],['research','Faculty partnerships'],['networking','Industry networking']]},
+    {label:'Account',items:[['ask','Ask SAGE'],['settings','Settings']]}
   ]
 
   return (
-    <div className="flex h-full min-w-[60rem]">
+    <CampusProvider><div className="flex h-full min-w-[60rem]">
       <aside className="relative flex w-56 shrink-0 flex-col bg-card/75 shadow-[var(--shadow-rail)]">
         <div className="drag px-5 pb-6 pt-9"><div className="no-drag"><Brand /></div></div>
-        <nav className="flex flex-col gap-1.5 px-3" aria-label="Primary">
-          {nav.map((n) => (
-            <button key={n.id} onClick={() => setView(n.id)} aria-current={view === n.id ? 'page' : undefined}
-              className={cn('group relative flex h-11 items-center gap-3 rounded-[var(--radius-input)] px-3 text-sm font-semibold transition-colors no-drag',
-                view === n.id ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:bg-secondary/70 hover:text-foreground')}>
-              <span className={cn('absolute inset-y-3 left-0 w-0.5 rounded-full bg-primary transition-opacity', view === n.id ? 'opacity-100' : 'opacity-0')} />
-              {n.icon}{n.label}
-              {n.badge ? <Badge tone="primary" className="ml-auto">{n.badge}</Badge> : null}
-            </button>
-          ))}
+        <nav className="min-h-0 flex-1 overflow-y-auto px-3" aria-label="Primary">
+          {groups.map(group=><details key={group.label} open className="mb-2"><summary className="cursor-pointer px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{group.label}</summary>{group.items.map(([id,label])=><button key={id} onClick={()=>setView(id)} aria-current={view===id?'page':undefined} className={cn('flex w-full items-center rounded-lg px-3 py-2 text-left text-sm no-drag',view===id?'bg-secondary font-bold':'text-muted-foreground hover:bg-secondary/70')}>{label}{id==='apply'&&agentBusy>0&&<Badge className="ml-auto">{agentBusy}</Badge>}</button>)}</details>)}
         </nav>
         <div className="mt-auto space-y-3 p-3">
           {checkpoints.length > 0 && (
@@ -79,8 +77,10 @@ export function App() {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={view} className="h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: reduceMotion ? 0.1 : 0.18, ease: [0.16, 1, 0.3, 1] }}>
-            {view === 'home' && <Home go={setView} />}
-            {view === 'exam' && <ExamPrep />}
+            {!['exam','study','library','ask','apply','settings','pricing'].includes(view) && <Campus key={view} view={view === 'home' ? 'dashboard' : view} />}
+            {view === 'pricing' && <Pricing />}
+            {['exam','study'].includes(view) && <ExamPrep voice={view==='study'} />}
+            {view === 'library' && <BitsomPrep />}
             {view === 'ask' && <Ask />}
             {view === 'apply' && <AutoApply />}
             {view === 'settings' && <Account onEditOnboarding={() => setEditOnboarding(true)} />}
@@ -88,7 +88,7 @@ export function App() {
         </AnimatePresence>
       </main>
       <CheckpointModal />
-    </div>
+    </div></CampusProvider>
   )
 }
 

@@ -89,6 +89,7 @@ async function unwrap<T>(p: Promise<{ ok: boolean; data?: T; error?: { message: 
 }
 
 const sage: SageApi = {
+  importReport: () => unwrap(ipcRenderer.invoke('sage:importReport')),
   authStatus: () => unwrap(ipcRenderer.invoke('sage:authStatus')),
   signIn: () => unwrap(ipcRenderer.invoke('sage:signIn')),
   cancelSignIn: () => unwrap(ipcRenderer.invoke('sage:cancelSignIn')),

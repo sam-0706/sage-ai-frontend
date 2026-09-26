@@ -5,6 +5,7 @@ import { api, errorMessage, type Mode } from '@/sage/api'
 import { useSage } from '@/sage/state'
 import { Button, Card, Field, Input, Select, Spinner, Switch, Textarea } from '@/components/ui'
 import { Brand } from '@/components/Brand'
+import catalogue from '@shared/bitsom-catalogue.json'
 import { cn } from '@/lib/utils'
 
 type FieldKind = 'text' | 'number' | 'tags' | 'select' | 'long'
@@ -13,9 +14,20 @@ interface FieldDef { key: string; label: string; kind: FieldKind; placeholder?: 
 const FIELDS: Record<Mode, FieldDef[]> = {
   student: [
     { key: 'institution_name', label: 'College / university', kind: 'text', placeholder: 'e.g. BITS School of Management' },
-    { key: 'program', label: 'Program', kind: 'text', placeholder: 'e.g. BBA, B.Tech CSE, MBA', required: true },
-    { key: 'semester', label: 'Semester / year', kind: 'number', placeholder: '4', required: true },
-    { key: 'subjects', label: 'Subjects this term', kind: 'tags', placeholder: 'Comma separated', required: true },
+    { key: 'program', label: 'Programme', kind: 'select', options: ['MBA'], required: true },
+    { key: 'semester', label: 'Term', kind: 'select', options: ['1','2','3','4','5','6'], required: true },
+    { key: 'specialisation', label: 'Specialisation', kind: 'select', options: ['Entrepreneurship and Innovation','Finance and Investing','Ecommerce and Digital Leadership','Leadership and Strategy','Marketing and Consumer Insights','Operations and Supply Chain Management'], required: true },
+    { key: 'batch', label: 'Batch / graduating year', kind: 'number', required: true },
+    { key: 'section', label: 'Section', kind: 'text' },
+    { key: 'target_role', label: 'Dream role', kind: 'text', required: true },
+    { key: 'salary_lpa', label: 'Target annual salary (INR lakh)', kind: 'number', required: true },
+    { key: 'daily_minutes', label: 'Minutes available each day (10–480)', kind: 'number', required: true },
+    { key: 'skills', label: 'Current skills', kind: 'tags' },
+    { key: 'preferred_locations', label: 'Preferred job locations', kind: 'tags' },
+    { key: 'experience_summary', label: 'Projects, work experience and achievements', kind: 'long' },
+    { key: 'internships_completed', label: 'Internships completed', kind: 'number' },
+    { key: 'resume_summary', label: 'Resume facts for career planning', kind: 'long' },
+    { key: 'subjects', label: 'Subjects this term (one per line)', kind: 'tags', placeholder: 'Comma separated', required: true },
     { key: 'career_goal', label: 'Career goal', kind: 'text', placeholder: 'e.g. Product management internship', required: true },
     { key: 'availability', label: 'When do you usually study?', kind: 'text', placeholder: 'e.g. Weekday evenings' }
   ],
@@ -64,6 +76,7 @@ interface Prefill {
   institution: string | null
   profile: Record<string, unknown>
   goals: string[]
+  deadline_call_consent: boolean
   call_consent: boolean
 }
 
@@ -83,6 +96,7 @@ export function SageOnboarding() {
   const [goals, setGoals] = useState('')
   const [phone, setPhone] = useState('')
   const [consent, setConsent] = useState(false)
+  const [deadlineConsent, setDeadlineConsent] = useState(false)
   const [window_, setWindow] = useState('Weekday evenings')
 
   useEffect(() => {
@@ -93,26 +107,28 @@ export function SageOnboarding() {
       setMode(prefill.mode)
       setPhone(prefill.phone ?? '')
       setConsent(prefill.call_consent)
+      setDeadlineConsent(prefill.deadline_call_consent ?? false)
       setGoals(prefill.goals.join('\n'))
       const p: Record<string, string> = {}
-      for (const [k, v] of Object.entries(prefill.profile)) p[k] = Array.isArray(v) ? v.join(', ') : v == null ? '' : String(v)
+      for (const [k, v] of Object.entries(prefill.profile)) p[k] = Array.isArray(v) ? v.join(k === 'subjects' ? '\n' : ', ') : v == null ? '' : String(v)
       if (prefill.institution && !p.institution_name) p.institution_name = prefill.institution
-      setProfile(p)
+      setProfile({institution_name:'BITSoM, Mumbai',program:'MBA',semester:'1',batch:'2026',daily_minutes:'60',...p})
       if (prefill.mode === 'professional' || prefill.mode === 'founder') setInterests(['check_ins', 'auto_apply'])
     }).catch((e) => setError(errorMessage(e))).finally(() => setLoading(false))
   }, [])
 
   const fields = FIELDS[mode]
   const missing = useMemo(() => fields.filter((f) => f.required && !profile[f.key]?.trim()).map((f) => f.label), [fields, profile])
-  const canNext = step === 0 ? name.trim().length > 0 : step === 1 ? missing.length === 0 : step === 3 ? !consent || phone.trim().length >= 8 : true
+  const canNext = step === 0 ? name.trim().length > 0 : step === 1 ? missing.length === 0 : step === 3 ? !(consent || deadlineConsent) || /^\+[1-9]\d{7,14}$/.test(phone.replace(/[\s()-]/g,'')) : true
 
   const toPayload = () => {
     const out: Record<string, unknown> = {}
     for (const f of fields) {
       const v = profile[f.key]?.trim()
       if (!v) continue
-      out[f.key] = f.kind === 'tags' ? v.split(',').map((s) => s.trim()).filter(Boolean) : f.kind === 'number' ? Number(v) : v
+      out[f.key] = f.kind === 'tags' ? v.split(f.key === 'subjects' ? '\n' : ',').map((s) => s.trim()).filter(Boolean) : f.kind === 'number' ? Number(v) : v
     }
+    if (mode === 'student') out.onboarding_version = 2
     return out
   }
 
@@ -123,7 +139,7 @@ export function SageOnboarding() {
       await api.post('/v1/onboarding', {
         full_name: name.trim(), mode, phone: phone.trim() || null, profile: toPayload(),
         goals: goals.split('\n').map((g) => g.trim()).filter(Boolean).slice(0, 10), interests,
-        call_consent: consent, preferred_call_window: consent ? window_ : null
+        call_consent: consent, deadline_call_consent: deadlineConsent, preferred_call_window: consent ? window_ : null
       })
       await refreshMe()
     } catch (e) {
@@ -194,7 +210,7 @@ export function SageOnboarding() {
                     {fields.map((f) => (
                       <div key={f.key} className={cn(f.kind === 'tags' || f.kind === 'long' ? 'sm:col-span-2' : '')}>
                         <Field label={`${f.label}${f.required ? ' *' : ''}`}>
-                          {f.kind === 'select' ? (
+                          {f.kind === 'long' || f.key === 'subjects' ? <Textarea rows={4} value={profile[f.key] ?? ''} onChange={e=>setProfile({...profile,[f.key]:e.target.value})} /> : f.kind === 'select' ? (
                             <Select value={profile[f.key] ?? ''} onChange={(e) => setProfile({ ...profile, [f.key]: e.target.value })}
                               options={[{ value: '', label: 'Choose…' }, ...(f.options ?? [])]} />
                           ) : (
@@ -205,6 +221,7 @@ export function SageOnboarding() {
                       </div>
                     ))}
                   </Card>
+                  {mode === 'student' && <Card className="space-y-3 p-5"><h3 className="font-bold">Choose courses from the published BITSoM catalogue</h3><p className="text-xs text-muted-foreground">All published core, elective and workplace course entries. Current availability needs institute confirmation.</p><div className="max-h-64 overflow-auto space-y-2">{Array.from(new Set(catalogue.tables.flatMap(table => table.slice(1).flatMap(row => row.slice(row.length === 3 ? 1 : 0))).filter(Boolean))).map(title => { const chosen=(profile.subjects ?? '').split('\n').map(x=>x.trim()); return <label className="flex gap-2 text-sm" key={title}><input type="checkbox" checked={chosen.includes(title)} onChange={e=>setProfile({...profile,subjects:(e.target.checked ? [...chosen.filter(Boolean),title] : chosen.filter(x=>x!==title)).join('\n')})} />{title}</label> })}</div><Button variant="outline" onClick={async()=>{const imported=await window.auta.getProfile(); if(imported) setProfile({...profile,resume_summary:JSON.stringify(imported,null,2).slice(0,16000)});}}>Use imported AutA profile for resume context</Button></Card>}
                   {missing.length > 0 && <p className="text-xs text-muted-foreground">Still needed: {missing.join(', ')}</p>}
                 </section>
               )}
@@ -213,7 +230,7 @@ export function SageOnboarding() {
                 <section className="space-y-6">
                   <header>
                     <h1 className="text-3xl font-bold">What do you want from SAGE?</h1>
-                    <p className="mt-2 text-sm text-muted-foreground">Pick everything that helps. You can use all features either way.</p>
+                    <p className="mt-2 text-sm text-muted-foreground">Pick everything that helps. Access depends on your chosen plan.</p>
                   </header>
                   <div className="grid gap-3 sm:grid-cols-2">
                     {INTERESTS.map((it) => {
@@ -243,7 +260,7 @@ export function SageOnboarding() {
                   <header>
                     <h1 className="text-3xl font-bold">AI calls</h1>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      SAGE can call you for a short check-in or a spoken exam quiz. Every call still needs your confirmation first — this only sets your preference.
+                      SAGE can call you for a short check-in or a spoken exam quiz. Study and interview calls start when you confirm. Automatic overdue follow-ups require the separate opt-in below.
                     </p>
                   </header>
                   <Card className="space-y-5 p-5">
@@ -254,6 +271,7 @@ export function SageOnboarding() {
                       </div>
                       <Switch checked={consent} onChange={setConsent} label="Allow AI calls" />
                     </div>
+                    <div className="flex items-center justify-between gap-4"><div><div className="text-sm font-bold">Automatic overdue assignment and fee follow-ups</div><p className="text-xs text-muted-foreground">Opt in to AI calls to your number, 9 am–6 pm IST, at most once per day. Pro / Ultra. Change this preference in onboarding at any time.</p></div><Switch checked={deadlineConsent} onChange={setDeadlineConsent} label="Allow automatic deadline calls" /></div>
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Field label="Phone number (with country code)"><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" /></Field>
                       <Field label="Best time to call"><Select value={window_} onChange={(e) => setWindow(e.target.value)} options={CALL_WINDOWS} disabled={!consent} /></Field>
@@ -273,6 +291,7 @@ export function SageOnboarding() {
                     <Row k="Using SAGE as" v={MODES.find((m) => m.value === mode)?.title ?? mode} />
                     {fields.filter((f) => profile[f.key]).map((f) => <Row key={f.key} k={f.label} v={profile[f.key]} />)}
                     <Row k="Interested in" v={interests.map((i) => INTERESTS.find((x) => x.value === i)?.label).join(' · ') || '—'} />
+                    <Row k="Automatic overdue calls" v={deadlineConsent ? "Opted in · 9 am–6 pm IST · at most daily" : "Off"} />
                     <Row k="AI calls" v={consent ? `Yes — ${phone} · ${window_}` : 'Not now'} />
                   </Card>
                 </section>

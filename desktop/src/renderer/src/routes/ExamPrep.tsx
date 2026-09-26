@@ -10,6 +10,8 @@ import {
 } from '@/sage/api'
 import { useSage } from '@/sage/state'
 import { Badge, Button, Card, Field, Input, Progress, Select, Spinner, Textarea } from '@/components/ui'
+import { courses } from '@shared/academics'
+import catalogue from '@shared/bitsom-catalogue.json'
 import { CallPanel } from '@/components/CallPanel'
 import { cn, timeAgo } from '@/lib/utils'
 
@@ -25,15 +27,15 @@ interface Overview {
   recent_assessments: { id: string; overall_score: number; readiness: Assessment['readiness']; created_at: string; deck_title: string; deck_id: string }[]
 }
 
-export function ExamPrep() {
+export function ExamPrep({voice=false}:{voice?:boolean}) {
   const [view, setView] = useState<View>({ name: 'home' })
-  return view.name === 'home' ? <ExamHome open={setView} />
+  return view.name === 'home' ? <ExamHome voice={voice} open={setView} />
     : view.name === 'deck' ? <DeckView id={view.id} initialTab={view.tab} open={setView} />
       : <AssessmentPage id={view.id} back={() => setView(view.deckId ? { name: 'deck', id: view.deckId, tab: 'results' } : { name: 'home' })} open={setView} />
 }
 
 // ================================================================= home: overview + generate + decks
-function ExamHome({ open }: { open: (v: View) => void }) {
+function ExamHome({ open,voice }: { open: (v: View) => void; voice:boolean }) {
   const [overview, setOverview] = useState<Overview | null>(null)
   const [decks, setDecks] = useState<DeckSummary[] | null>(null)
   const [error, setError] = useState('')
@@ -50,7 +52,7 @@ function ExamHome({ open }: { open: (v: View) => void }) {
   useEffect(() => { void load() }, [load])
 
   return (
-    <Page title="Exam prep" subtitle="Learn a topic fast with AI cue cards, then take a spoken quiz to see exactly where you stand.">
+    <Page title={voice ? "Study AI" : "Quick Notes"} subtitle="Learn a topic fast with AI cue cards, then take a spoken quiz to see exactly where you stand.">
       <div className="grid gap-3 sm:grid-cols-4">
         <Stat icon={<Layers className="h-4 w-4" />} label="Decks" value={overview?.decks} />
         <Stat icon={<CalendarClock className="h-4 w-4" />} label="Cards due now" value={overview?.due_now} accent={!!overview?.due_now} />
@@ -58,7 +60,7 @@ function ExamHome({ open }: { open: (v: View) => void }) {
         <Stat icon={<Target className="h-4 w-4" />} label="Last quiz" value={overview?.recent_assessments[0] ? `${overview.recent_assessments[0].overall_score}%` : '—'} />
       </div>
 
-      <GenerateDeck onCreated={(d) => open({ name: 'deck', id: d.id, tab: 'study' })} />
+      <GenerateDeck onCreated={(d) => open({ name: 'deck', id: d.id, tab: voice ? 'quiz' : 'cards' })} />
 
       {error && <p className="text-sm text-destructive">{error}</p>}
       <section className="space-y-3">
@@ -68,7 +70,7 @@ function ExamHome({ open }: { open: (v: View) => void }) {
         ) : (
           <div className="grid gap-3 lg:grid-cols-2">
             {decks.map((d) => (
-              <button key={d.id} onClick={() => open({ name: 'deck', id: d.id })} className="text-left no-drag">
+              <button key={d.id} onClick={() => open({ name: 'deck', id: d.id, tab: voice ? 'quiz' : 'cards' })} className="text-left no-drag">
                 <Card className="h-full space-y-3 p-5 transition-colors hover:bg-secondary/60">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -96,7 +98,8 @@ function ExamHome({ open }: { open: (v: View) => void }) {
 function GenerateDeck({ onCreated }: { onCreated: (d: Deck) => void }) {
   const { me } = useSage()
   const [topic, setTopic] = useState('')
-  const [level, setLevel] = useState('')
+  const [level, setLevel] = useState('MBA')
+  const [subject,setSubject] = useState(courses[0].name)
   const [exam, setExam] = useState('')
   const [count, setCount] = useState('12')
   const [notes, setNotes] = useState('')
@@ -109,7 +112,7 @@ function GenerateDeck({ onCreated }: { onCreated: (d: Deck) => void }) {
     setError('')
     try {
       onCreated(await api.post<Deck>('/v1/exam-prep/decks', {
-        topic: topic.trim(), level: level.trim() || null, exam: exam.trim() || null, count: Number(count), notes: showNotes && notes.trim() ? notes : null
+        topic: (subject === 'Custom' ? topic.trim() : subject + ': ' + topic.trim()).slice(0,200), level: level.trim() || null, exam: exam.trim() || null, count: Number(count), notes: showNotes && notes.trim() ? notes : null
       }))
     } catch (e) {
       setError(errorMessage(e))
@@ -125,7 +128,9 @@ function GenerateDeck({ onCreated }: { onCreated: (d: Deck) => void }) {
         {left !== undefined && <span className="text-[11px] text-muted-foreground">{left} AI generations left</span>}
       </div>
       <div className="grid gap-3 md:grid-cols-[2fr_1fr_1fr_110px]">
-        <Field label="Topic"><Input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g. Hypothesis testing, Photosynthesis, Porter's five forces" onKeyDown={(e) => e.key === 'Enter' && topic.trim().length > 1 && !busy && void create()} /></Field>
+        <Field label="Course"><Select value={subject} onChange={e=>setSubject(e.target.value)} options={[...Array.from(new Set(catalogue.tables.flatMap(table=>table.slice(1).flatMap(row=>row.slice(row.length===3?1:0))).filter(Boolean))),'Custom']} /></Field>
+        <Field label="Suggested question focus"><Select value="" onChange={e=>setTopic(e.target.value)} options={[{value:'',label:'Choose a focus or type below'},...(courses.find(c=>c.name===subject)?.cards??[]).map(c=>({value:c.question,label:c.question}))]} /></Field>
+        <Field label="Topic"><Input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g. Hypothesis testing, market segmentation, valuation" onKeyDown={(e) => e.key === 'Enter' && topic.trim().length > 1 && !busy && void create()} /></Field>
         <Field label="Level (optional)"><Input value={level} onChange={(e) => setLevel(e.target.value)} placeholder="e.g. BBA year 2" /></Field>
         <Field label="Exam (optional)"><Input value={exam} onChange={(e) => setExam(e.target.value)} placeholder="e.g. End-term" /></Field>
         <Field label="Cards"><Select value={count} onChange={(e) => setCount(e.target.value)} options={['8', '12', '16', '20', '30']} /></Field>
@@ -146,10 +151,10 @@ function GenerateDeck({ onCreated }: { onCreated: (d: Deck) => void }) {
 }
 
 // ================================================================= deck
-function DeckView({ id, initialTab, open }: { id: string; initialTab?: DeckTab; open: (v: View) => void }) {
+export function DeckView({ id, initialTab, open }: { id: string; initialTab?: DeckTab; open: (v: View) => void }) {
   const { me } = useSage()
   const [deck, setDeck] = useState<Deck | null>(null)
-  const [tab, setTab] = useState<DeckTab>(initialTab ?? 'study')
+  const [tab, setTab] = useState<DeckTab>(initialTab ?? 'cards')
   const [notesOpen, setNotesOpen] = useState(false)
   const [error, setError] = useState('')
   const load = useCallback(async () => {
@@ -166,9 +171,9 @@ function DeckView({ id, initialTab, open }: { id: string; initialTab?: DeckTab; 
   if (!deck) return <Page title="Loading…" back={() => open({ name: 'home' })}>{error ? <p className="text-destructive">{error}</p> : <Spinner className="text-primary" />}</Page>
 
   const tabs: { id: DeckTab; label: string; icon: React.ReactNode; badge?: number }[] = [
-    { id: 'study', label: 'Study', icon: <Brain className="h-4 w-4" />, badge: deck.stats.due_now || undefined },
+    { id: 'study', label: 'Quiz · practice', icon: <Brain className="h-4 w-4" />, badge: deck.stats.due_now || undefined },
     { id: 'cards', label: 'All cards', icon: <Layers className="h-4 w-4" /> },
-    { id: 'quiz', label: 'Quiz call', icon: <PhoneCall className="h-4 w-4" /> },
+    { id: 'quiz', label: deck.coach_kind === 'interview' ? 'Mock interview' : 'Study AI call', icon: <PhoneCall className="h-4 w-4" /> },
     { id: 'results', label: 'Results', icon: <ListChecks className="h-4 w-4" />, badge: deck.assessments.length || undefined }
   ]
 
@@ -207,9 +212,9 @@ function DeckView({ id, initialTab, open }: { id: string; initialTab?: DeckTab; 
       {tab === 'cards' && <CardList cards={deck.cards} />}
       {tab === 'quiz' && (
         <div className="space-y-3">
-          <p className="text-sm text-muted-foreground">SAGE's AI tutor calls you and asks 5–6 questions out loud, focusing on concepts you've struggled with. Afterwards you get a detailed breakdown of where you stand, and weak cards come back into your study queue.</p>
+          <p className="text-sm text-muted-foreground">{deck.coach_kind === 'interview' ? 'SAGE’s mock interviewer uses your resume and the selected job description. Practice role skills and behavioural questions, then review feedback and weak areas. This is practice, not a hiring decision.' : 'SAGE’s AI tutor asks questions, explains concepts when you struggle, and creates a post-call assessment with weak areas and a study plan.'}</p>
           <CallPanel
-            title="Spoken quiz"
+            title={deck.coach_kind === 'interview' ? 'Mock placement interview' : 'Spoken quiz'}
             preflightPath={`/v1/exam-prep/calls/preflight?deck_id=${deck.id}`}
             createPath="/v1/exam-prep/calls"
             createBody={{ deck_id: deck.id }}
@@ -349,7 +354,7 @@ function CardList({ cards }: { cards: CueCard[] }) {
 }
 
 // ================================================================= assessment ("where you stand")
-function AssessmentPage({ id, back, open }: { id: string; back: () => void; open: (v: View) => void }) {
+export function AssessmentPage({ id, back, open }: { id: string; back: () => void; open: (v: View) => void }) {
   const [a, setA] = useState<Assessment | null>(null)
   const [error, setError] = useState('')
   useEffect(() => { void api.get<Assessment>(`/v1/exam-prep/assessments/${id}`).then(setA).catch((e) => setError(errorMessage(e))) }, [id])

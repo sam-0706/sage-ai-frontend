@@ -7,6 +7,7 @@ import { Badge, Button, Card, Spinner } from '@/components/ui'
 import { CallPanel } from '@/components/CallPanel'
 import { Page } from '@/routes/ExamPrep'
 import { cn } from '@/lib/utils'
+import { Academics } from './Academics'
 
 interface Intervention {
   id: string
@@ -89,12 +90,13 @@ export function Home({ go }: { go: (view: 'exam' | 'ask' | 'apply' | 'settings')
           value={me?.subscription ? Math.floor(me.subscription.voice.remaining_seconds / 60) : '…'} onClick={() => go('settings')} />
       </div>
 
+      <Academics />
       <Card className="space-y-4 p-6">
         <div className="flex items-start justify-between gap-4">
           <h2 className="flex items-center gap-2 text-lg font-bold"><Compass className="h-5 w-5 text-primary" /> Today's priority</h2>
           <Button variant={p ? 'outline' : 'default'} size="sm" onClick={prioritize} loading={busy}><Sparkles className="h-4 w-4" /> {p ? 'Re-check' : 'Find my priority'}</Button>
         </div>
-        {!data ? <Spinner className="text-primary" /> : data.state === 'needs_setup' ? (
+        {!data ? (error ? <Button variant="outline" onClick={() => void load()}>Retry loading priority</Button> : <Spinner className="text-primary" />) : data.state === 'needs_setup' ? (
           <p className="text-sm text-muted-foreground">Add a signal (a deadline, attendance figure or goal progress) in Settings → Profile, or load a labelled demo profile, and SAGE will pick what matters first.</p>
         ) : !p ? (
           <p className="text-sm text-muted-foreground">Ask SAGE to review your signals and pick the one thing that deserves attention.</p>

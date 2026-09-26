@@ -21,3 +21,6 @@ __pycache__/
 # app data (dev)
 scratch/
 .e2e/
+
+# Local verification screenshots may contain imported personal data.
+/artifacts/

@@ -1,7 +1,6 @@
 import { createServer } from 'http'
 import { randomBytes } from 'crypto'
 import { shell } from 'electron'
-import { google } from 'googleapis'
 import type { GmailStatus } from '@shared/types'
 import { getSecret, setSecret, deleteSecret, secretName } from '../secrets/keychain'
 
@@ -63,6 +62,7 @@ export async function gmailDisconnect(): Promise<void> {
 }
 
 export async function gmailConnect(): Promise<GmailStatus> {
+  const { google } = await import('googleapis')
   const creds = loadClient()
   if (!creds) {
     throw new Error(
@@ -142,6 +142,7 @@ export async function findLatestOtp(): Promise<
   const stored = loadToken()
   if (!creds || !stored) return null
 
+  const { google } = await import('googleapis')
   const oauth = new google.auth.OAuth2(creds.clientId, creds.clientSecret)
   oauth.setCredentials(stored.tokens as Record<string, unknown>)
   const gmail = google.gmail({ version: 'v1', auth: oauth })
