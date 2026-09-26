@@ -1,0 +1,5 @@
+{
+  "status": "implemented",
+  "decisions": ["warm ivory canvas", "asymmetric composition", "live source links on opportunities", "interactive SVG network"],
+  "anti_patterns_removed": ["equal feature-card rows", "Clerk-hosted first screen", "purple-blue gradient"]
+}

@@ -1,0 +1,8 @@
+{
+  "product": "SAGE web",
+  "archetype": "editorial action workspace",
+  "primary_action": "turn profile into the next best action",
+  "audience": ["ambitious MBA students", "founders", "working professionals"],
+  "visual_metaphor": "connected route map",
+  "risks": ["generic dashboard grids", "decorative gradients", "unverified opportunity claims"]
+}

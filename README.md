@@ -5,7 +5,7 @@ Client apps for **SAGE AI — Strategic Action and Growth Engine**.
 | Path | Client | Status |
 |---|---|---|
 | [`desktop/`](desktop/) | Electron desktop app (macOS / Windows) | ✅ Onboarding, Home, Exam prep, Ask SAGE, Auto apply, Settings |
-| `web/` | React + Vite web app | Next |
+| [`web/`](web/) | React + Vite web app | ✅ Google sign-in, onboarding, dashboard, live job search, network graph, academics, planning and study |
 | `mobile/` | Flutter app | After web |
 | [`src/api/client.js`](src/api/client.js) | Shared JS API client for web | ✅ |
 
