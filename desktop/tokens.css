@@ -1,0 +1,133 @@
+/* Hallmark · genre: atmospheric · macrostructure: Workbench · theme: Midnight
+ * design-system: design.md · designed-as-app · nav: N3 side-rail · footer: Ft4 colophon
+ * pre-emit critique: P5 H5 E4 S5 R5 V4 · contrast: pass · slop: pass
+ */
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-paper: oklch(14% 0.02 278);
+  --color-paper-2: oklch(18% 0.024 278);
+  --color-paper-3: oklch(22% 0.028 278);
+  --color-ink: oklch(96% 0.01 275);
+  --color-ink-2: oklch(78% 0.014 275);
+  --color-rule: oklch(29% 0.026 278);
+  --color-rule-2: oklch(39% 0.03 278);
+  --color-muted: oklch(62% 0.018 275);
+  --color-neutral: oklch(49% 0.02 278);
+  --color-accent: oklch(70% 0.18 295);
+  --color-accent-ink: oklch(15% 0.025 285);
+  --color-focus: oklch(78% 0.15 295);
+  --color-success: oklch(72% 0.15 153);
+  --color-warning: oklch(80% 0.16 77);
+  --color-danger: oklch(68% 0.2 25);
+
+  --background: 14% 0.02 278;
+  --foreground: 96% 0.01 275;
+  --card: 18% 0.024 278;
+  --card-foreground: 96% 0.01 275;
+  --popover: 20% 0.026 278;
+  --popover-foreground: 96% 0.01 275;
+  --primary: 70% 0.18 295;
+  --primary-foreground: 15% 0.025 285;
+  --secondary: 22% 0.028 278;
+  --secondary-foreground: 88% 0.012 275;
+  --muted: 22% 0.022 278;
+  --muted-foreground: 62% 0.018 275;
+  --accent: 27% 0.06 292;
+  --accent-foreground: 92% 0.04 292;
+  --border: 29% 0.026 278;
+  --input: 32% 0.028 278;
+  --ring: 78% 0.15 295;
+  --success: 72% 0.15 153;
+  --warning: 80% 0.16 77;
+  --destructive: 68% 0.2 25;
+  --destructive-foreground: 98% 0.006 25;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  --color-paper: oklch(98% 0.006 275);
+  --color-paper-2: oklch(96% 0.01 275);
+  --color-paper-3: oklch(92% 0.018 275);
+  --color-ink: oklch(20% 0.025 278);
+  --color-ink-2: oklch(36% 0.026 278);
+  --color-rule: oklch(86% 0.018 275);
+  --color-rule-2: oklch(76% 0.024 275);
+  --color-muted: oklch(50% 0.025 275);
+  --color-neutral: oklch(62% 0.022 275);
+  --color-accent: oklch(56% 0.2 295);
+  --color-accent-ink: oklch(99% 0.004 295);
+  --color-focus: oklch(52% 0.21 295);
+  --color-success: oklch(51% 0.15 153);
+  --color-warning: oklch(59% 0.16 70);
+  --color-danger: oklch(57% 0.2 25);
+
+  --background: 98% 0.006 275;
+  --foreground: 20% 0.025 278;
+  --card: 99% 0.004 275;
+  --card-foreground: 20% 0.025 278;
+  --popover: 99% 0.004 275;
+  --popover-foreground: 20% 0.025 278;
+  --primary: 56% 0.2 295;
+  --primary-foreground: 99% 0.004 295;
+  --secondary: 92% 0.018 275;
+  --secondary-foreground: 26% 0.025 278;
+  --muted: 94% 0.014 275;
+  --muted-foreground: 50% 0.025 275;
+  --accent: 91% 0.04 292;
+  --accent-foreground: 33% 0.12 292;
+  --border: 86% 0.018 275;
+  --input: 82% 0.022 275;
+  --ring: 52% 0.21 295;
+  --success: 51% 0.15 153;
+  --warning: 59% 0.16 70;
+  --destructive: 57% 0.2 25;
+  --destructive-foreground: 99% 0.004 25;
+}
+
+:root {
+  --font-display: 'Manrope Variable', 'Avenir Next', ui-sans-serif, sans-serif;
+  --font-body: 'Manrope Variable', 'Avenir Next', ui-sans-serif, sans-serif;
+  --font-outlier: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --display-weight: 700;
+  --display-style: normal;
+  --tracking-display: -0.035em;
+  --tracking-label: 0.08em;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.563rem;
+  --text-2xl: 1.953rem;
+  --text-display: clamp(2rem, 3vw, 3.25rem);
+
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4.5rem;
+  --space-3xl: 7rem;
+  --space-4xl: 11rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+
+  --rule-hair: 1px;
+  --rule-fine: 2px;
+  --radius-card: 1rem;
+  --radius-pill: 999px;
+  --radius-input: 0.7rem;
+  --shadow-card: 0 20px 56px oklch(0% 0 0 / 0.2);
+  --shadow-float: 0 24px 72px oklch(0% 0 0 / 0.34);
+  --shadow-rail: 12px 0 42px oklch(0% 0 0 / 0.12);
+}

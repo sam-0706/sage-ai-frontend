@@ -1,0 +1,106 @@
+@import "../../../../tokens.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  border-color: oklch(var(--border));
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 450;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+#root {
+  background:
+    radial-gradient(circle at 88% -8%, oklch(var(--primary) / 0.11), transparent 30rem),
+    var(--color-paper);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-family: var(--font-display);
+  font-style: normal;
+  letter-spacing: var(--tracking-display);
+}
+
+button,
+a,
+[role='button'] {
+  white-space: nowrap;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: oklch(var(--primary) / 0.28);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-rule);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-rule-2);
+  background-clip: content-box;
+}
+
+.drag {
+  -webkit-app-region: drag;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+.surface-grid {
+  background-image:
+    linear-gradient(oklch(var(--border) / 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(var(--border) / 0.3) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+.mono {
+  font-family: var(--font-outlier);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 120ms !important;
+    transition-property: opacity, color, background-color, border-color !important;
+  }
+}

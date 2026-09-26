@@ -1,0 +1,23 @@
+# deps & build
+node_modules/
+out/
+release/
+dist/
+*.log
+
+# python / applypilot leftovers in this dir
+.venv/
+ApplyPilot/
+__pycache__/
+
+# env & secrets — never commit
+.env
+.env.*
+!.env.example
+
+# os
+.DS_Store
+
+# app data (dev)
+scratch/
+.e2e/

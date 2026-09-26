@@ -1,0 +1,95 @@
+{
+  "name": "sage-ai-desktop",
+  "version": "1.0.0",
+  "description": "SAGE AI desktop \u2014 exam prep, AI check-ins, knowledge assistant and a local auto-apply agent.",
+  "main": "out/main/index.js",
+  "author": "SAGE AI",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "postinstall": "electron-rebuild -f -w better-sqlite3 || true",
+    "pkg": "electron-vite build && electron-builder",
+    "pkg:mac": "electron-vite build && electron-builder --mac --arm64",
+    "pkg:win": "electron-vite build && electron-builder --win --x64",
+    "playwright:install": "playwright install chromium"
+  },
+  "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@skyvern/client": "^1.0.24",
+    "better-sqlite3": "^11.8.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.0.0",
+    "googleapis": "^144.0.0",
+    "lucide-react": "^0.469.0",
+    "pdf-parse": "^1.1.1",
+    "playwright": "^1.49.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.1",
+    "tailwind-merge": "^2.6.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.7.1",
+    "@radix-ui/react-dialog": "^1.1.4",
+    "@radix-ui/react-dropdown-menu": "^2.1.4",
+    "@radix-ui/react-label": "^2.1.1",
+    "@radix-ui/react-progress": "^1.1.1",
+    "@radix-ui/react-scroll-area": "^1.2.2",
+    "@radix-ui/react-select": "^2.1.4",
+    "@radix-ui/react-separator": "^1.1.1",
+    "@radix-ui/react-slot": "^1.1.1",
+    "@radix-ui/react-switch": "^1.1.2",
+    "@radix-ui/react-tabs": "^1.1.2",
+    "@radix-ui/react-toast": "^1.2.4",
+    "@radix-ui/react-tooltip": "^1.1.6",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.5",
+    "@types/pdf-parse": "^1.1.4",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3",
+    "vite": "^5.4.11"
+  },
+  "build": {
+    "appId": "ai.sage.desktop",
+    "productName": "SAGE AI",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**/*",
+      "resources/**/*"
+    ],
+    "mac": {
+      "icon": "resources/icon.icns",
+      "category": "public.app-category.education",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "icon": "resources/icon.ico",
+      "signAndEditExecutable": false,
+      "target": [
+        "nsis"
+      ]
+    }
+  }
+}

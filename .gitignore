@@ -5,3 +5,10 @@ node_modules/
 dist/
 .vercel
 *.csv
+
+# desktop
+desktop/node_modules/
+desktop/out/
+desktop/release/
+desktop/.e2e/
+*.tsbuildinfo
