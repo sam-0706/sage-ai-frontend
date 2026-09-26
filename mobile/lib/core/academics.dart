@@ -1,0 +1,46 @@
+// Generated from the shared BITSoM starter library (desktop src/shared/academics.ts).
+// Course names come from the published catalogue; cards are authored demo study material.
+
+class StarterCard { const StarterCard(this.question, this.answer); final String question; final String answer; }
+class StarterCourse { const StarterCourse(this.id, this.name, this.term, this.cards); final String id; final String name; final int term; final List<StarterCard> cards; }
+
+const curriculumSource = 'https://www.collegeadmission.in/notice/college/bitsom-admission-to-mba-programme-2026-2027-11982';
+const curriculumNotice = 'Published catalogue reference; current official curriculum unverified. Cards are authored demo study material.';
+
+const starterCourses = <StarterCourse>[
+  StarterCourse('bitsom-1', 'Marketing Management', 1, [StarterCard('How does segmentation differ from targeting?', 'Segmentation divides a market into groups with shared needs. Targeting selects the groups a business will serve.'), StarterCard('What are the four Ps?', 'Product, price, place and promotion. They align the offering, cost, distribution and communication with the target customer.')]),
+  StarterCourse('bitsom-2', 'Business Statistics I', 1, [StarterCard('When is the median preferable to the mean?', 'Use the median for skewed data or strong outliers because extreme values do not pull it as much as the mean.'), StarterCard('What does standard deviation measure?', 'The spread of observations around their mean, expressed in the same units as the observations.')]),
+  StarterCourse('bitsom-3', 'Design Thinking', 1, [StarterCard('Why prototype before building a full product?', 'A prototype tests assumptions quickly and cheaply with users, exposing misunderstandings before large investments.'), StarterCard('What is an empathy interview?', 'An open-ended conversation to understand user needs, context and behaviour without leading them toward a preferred solution.')]),
+  StarterCourse('bitsom-4', 'Financial Accounting & Decision Making', 1, [StarterCard('What is the accounting equation?', 'Assets = Liabilities + Equity. Every recorded transaction preserves this balance.'), StarterCard('Why can a profitable firm run out of cash?', 'Profit includes accruals. Receivables, inventory purchases and debt payments can consume cash even when reported profit is positive.')]),
+  StarterCourse('bitsom-5', 'Operations Management', 1, [StarterCard('What is a bottleneck?', 'The process step with the lowest effective capacity. It constrains the throughput of the whole system.'), StarterCard('State Little’s law.', 'Average work in progress = average throughput × average flow time, for a stable process with consistent units.')]),
+  StarterCourse('bitsom-6', 'Corporate Finance I', 1, [StarterCard('How do you calculate net present value?', 'Discount each future cash flow at the required return, then subtract the initial investment. Positive NPV indicates value creation under those assumptions.'), StarterCard('What is the time value of money?', 'Money available today can earn a return. A future amount is discounted to compare it with money today.')]),
+  StarterCourse('bitsom-7', 'Decision Models & Uncertainty', 2, [StarterCard('How is expected monetary value calculated?', 'Multiply each outcome by its probability and sum the products. It is a probability-weighted average, not a guaranteed result.'), StarterCard('What does sensitivity analysis test?', 'How a decision or result changes when assumptions such as demand, cost or probabilities vary.')]),
+  StarterCourse('bitsom-8', 'Organisation Behaviour', 2, [StarterCard('What is psychological safety?', 'A shared belief that a team permits interpersonal risks such as asking questions, admitting mistakes and raising concerns.'), StarterCard('How does intrinsic motivation differ from extrinsic motivation?', 'Intrinsic motivation comes from interest or satisfaction in the work. Extrinsic motivation comes from external rewards or consequences.')]),
+  StarterCourse('bitsom-9', 'Business Statistics II', 2, [StarterCard('What does a confidence interval describe?', 'An interval produced by a method that captures the fixed population parameter at the stated rate over repeated samples.'), StarterCard('Does correlation prove causation?', 'No. Confounding variables, reverse causality or coincidence may explain an association. Causal claims need an appropriate design and assumptions.')]),
+  StarterCourse('bitsom-10', 'Entrepreneurship Foundations', 2, [StarterCard('What is a minimum viable product?', 'The smallest usable offering that tests a critical business assumption with real customers and produces actionable learning.'), StarterCard('What is product-market fit?', 'Evidence that a product satisfies strong demand in a defined market, often reflected in retention and repeated use or purchases.')]),
+  StarterCourse('bitsom-11', 'Digital Business and Innovation', 2, [StarterCard('What is a network effect?', 'The value of a product to users changes as more users participate. Positive network effects can increase value with adoption.'), StarterCard('How does a platform differ from a pipeline business?', 'A platform facilitates interactions among participant groups. A pipeline creates and delivers value through a more linear chain.')]),
+  StarterCourse('bitsom-12', 'Microeconomics', 2, [StarterCard('What is opportunity cost?', 'The value of the best alternative forgone when making a choice.'), StarterCard('What does price elasticity of demand measure?', 'Percentage change in quantity demanded divided by percentage change in price. Its magnitude indicates responsiveness to price changes.')]),
+  StarterCourse('bitsom-13', 'Business Drivers of Industry', 3, [StarterCard('What are Porter’s five forces?', 'Competitive rivalry, threat of entry, threat of substitutes, supplier power and buyer power. Together they help analyse industry profit potential.'), StarterCard('Why distinguish an industry trend from a company advantage?', 'An industry trend affects many firms; a company advantage depends on capabilities or positioning that support relative performance.')]),
+  StarterCourse('bitsom-14', 'Investment & Portfolio Management', 3, [StarterCard('Why diversify a portfolio?', 'Combining imperfectly correlated assets can reduce asset-specific risk. It does not eliminate market risk.'), StarterCard('What is portfolio expected return?', 'The sum of each asset’s expected return multiplied by its portfolio weight.')]),
+  StarterCourse('bitsom-15', 'Consumer Behaviour', 3, [StarterCard('What is perceived risk in a purchase?', 'A consumer’s expectation of possible loss or uncertainty, such as financial, functional or social consequences.'), StarterCard('How can social proof influence buying?', 'People may use others’ choices or reviews as information, especially when uncertain about product quality.')]),
+  StarterCourse('bitsom-16', 'Managerial Accounting', 3, [StarterCard('What is contribution margin?', 'Sales revenue minus variable costs. It contributes toward covering fixed costs and then profit.'), StarterCard('How do you calculate break-even units?', 'Fixed costs divided by contribution margin per unit, assuming a positive unit margin and constant cost and price assumptions.')]),
+  StarterCourse('bitsom-17', 'Competitive & Corporate Strategy', 3, [StarterCard('How does competitive strategy differ from corporate strategy?', 'Competitive strategy concerns how to win in a business. Corporate strategy concerns which businesses to own and how the parent adds value.'), StarterCard('What makes a resource strategically valuable?', 'It helps create customer value or reduce costs. Sustained advantage also depends on scarcity, difficulty of imitation and organisation.')]),
+  StarterCourse('bitsom-18', 'Negotiation Analysis', 3, [StarterCard('What is BATNA?', 'Best alternative to a negotiated agreement: the strongest available option if the current negotiation fails.'), StarterCard('What is a zone of possible agreement?', 'The overlap between the parties’ acceptable outcomes. If no overlap exists, an agreement requires changed terms or alternatives.')]),
+];
+
+class AttendanceResult { const AttendanceResult(this.percentage, this.needed, this.canMiss); final double? percentage; final int? needed; final int canMiss; }
+
+/// needed: consecutive classes to reach target (null = 100% unreachable); canMiss: classes you can still miss.
+AttendanceResult attendanceMath(int attended, int held, double target) {
+  if (attended < 0 || held < attended || target <= 0 || target > 100) {
+    throw ArgumentError('Enter valid class counts and a target from 1 to 100.');
+  }
+  final int? needed = target == 100
+      ? (attended == held ? 0 : null)
+      : ((target * held - 100 * attended) / (100 - target)).ceil().clamp(0, 1 << 30);
+  final canMiss = ((100 * attended - target * held) / target).floor().clamp(0, 1 << 30);
+  return AttendanceResult(held == 0 ? null : 100 * attended / held, needed, canMiss);
+}
+
+const specialisations = ['Entrepreneurship and Innovation', 'Finance and Investing', 'Ecommerce and Digital Leadership',
+  'Leadership and Strategy', 'Marketing and Consumer Insights', 'Operations and Supply Chain Management'];
