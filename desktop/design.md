@@ -1,26 +1,28 @@
-# Design — AutA
+# Design — SAGE AI
 
-A locked design system for the AutA desktop application. Every route reads this
+A locked design system for the SAGE AI desktop application. Every route reads this
 system through `tokens.css`; page-specific styling may extend it but must not
 replace its colour, type, spacing, motion, or interaction language.
 
 ## Genre
 
-Atmospheric, grounded by technical and utilitarian interaction design. The app
-should feel calm under load: a focused workspace for supervising automation,
-not a marketing dashboard.
+Modern editorial utility. The app should feel like an ambitious student's
+personal operating system: calm, decisive, optimistic, and dense with useful
+context without looking like an admin template.
 
 ## Macrostructure family
 
 - Marketing pages: not currently in scope.
-- App pages: Workbench. Function and live evidence carry the page. Use a compact
-  N3 side rail, a task canvas, and a contextual inspector or action surface.
+- App pages: Command center. Use a dark navigation rail, a warm reading canvas,
+  one dominant action or insight, and supporting editorial panels with varied
+  density. Avoid uniform grids of interchangeable cards.
 - Content pages: not currently in scope.
 
 ## Theme
 
-Midnight is the default. A light companion theme is available when the user
-chooses it; both use the same violet anchor and semantic status colours.
+Warm daylight is the default presentation. A midnight companion theme is
+available; both share a vivid violet anchor, an ink navigation rail, and
+semantic mint, amber, and coral signals.
 
 - `--color-paper`: `oklch(14% 0.020 278)`
 - `--color-paper-2`: `oklch(18% 0.024 278)`
@@ -33,7 +35,7 @@ chooses it; both use the same violet anchor and semantic status colours.
 
 ## Typography
 
-- Display: Manrope Variable, weight 700, roman.
+- Display: Manrope Variable, weight 750, roman.
 - Body: Manrope Variable, weight 450, roman.
 - Mono: JetBrains Mono Variable, weight 500; reserved for URLs, timestamps,
   run status, and build/privacy colophon.
@@ -63,8 +65,8 @@ semantic tokens or the matching Tailwind scale.
 
 ## CTA voice
 
-- Primary: violet fill, compact rounded rectangle, verb-first label.
-- Secondary: elevated neutral surface, never a faint ghost on critical actions.
+- Primary: ink-to-violet fill, compact rounded rectangle, verb-first label.
+- Secondary: crisp paper surface with a visible rule.
 - Destructive: red tint plus explicit noun (`Delete application`, `Wipe data`).
 
 ## Per-page allowances
@@ -75,12 +77,12 @@ semantic tokens or the matching Tailwind scale.
 
 ## What pages MUST share
 
-- AutA wordmark and orbit mark.
-- N3 side rail and active-view indicator.
+- SAGE AI wordmark and droplet mark.
+- Ink navigation rail and luminous active-view indicator.
 - Violet anchor colour and semantic checkpoint status system.
 - Manrope + JetBrains Mono pairing.
 - Button/input geometry, focus rings, and 4-point rhythm.
-- Human-control language: `Needs you`, `Take over`, `Resume agent`, `Review & submit`.
+- Direct action language: `Start practice`, `Build my plan`, `Review`, `Continue`.
 
 ## What pages MAY differ on
 

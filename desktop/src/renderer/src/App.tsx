@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Home as HomeIcon, Layers, MessageCircle, Send, Settings as SettingsIcon, WifiOff } from 'lucide-react'
+import {
+  Activity, BadgeIndianRupee, BookOpenCheck, BriefcaseBusiness, CalendarDays,
+  ChartNoAxesCombined, ChevronDown, ClipboardCheck, CreditCard, FlaskConical,
+  GraduationCap, Headphones, Home as HomeIcon, Landmark, LibraryBig, ListChecks,
+  Mic2, Network, Presentation, Route, Send, Settings as SettingsIcon,
+  Sparkles, Telescope, UserRound, WalletCards, WifiOff
+} from 'lucide-react'
 import { useAuta } from '@/state'
 import { useSage } from '@/sage/state'
 import { SignIn } from '@/routes/SignIn'
@@ -23,6 +29,7 @@ export function App() {
   const { ready, applications, checkpoints } = useAuta()
   const [demoMode, setDemoMode] = useState(false)
   const [view, setView] = useState<View>('home')
+  const [openGroups, setOpenGroups] = useState<string[]>(['Overview'])
   const [editOnboarding, setEditOnboarding] = useState(false)
   const reduceMotion = useReducedMotion()
 
@@ -40,39 +47,56 @@ export function App() {
 
   const agentBusy = applications.filter((a) => a.status === 'running' || a.status === 'paused_checkpoint').length
   const groups = [
-    {label:'Overview',items:[['home','Home dashboard'],['pricing','Plans & pricing']]},
-    {label:'Placements',items:[['jobs','On-campus jobs'],['apply','Auto-Apply'],['interview','Interview AI']]},
-    {label:'Attendance',items:[['timetable','Timetable & calendar'],['attendance','Attendance calculator'],['class_recommendations','Class priorities']]},
-    {label:'Semester planner',items:[['semester','Create a plan'],['progress','Daily progress'],['activity','Activity planner']]},
-    {label:'Pending work',items:[['assignments','Assignments'],['fees','Fees']]},
-    {label:'Exam prep',items:[['exam','Quick Notes'],['study','Study AI'],['library','Demo cue-card library']]},
-    {label:'Exposure',items:[['internships','Internships'],['workshops','Workshops'],['research','Faculty partnerships'],['networking','Industry networking']]},
-    {label:'Account',items:[['ask','Ask SAGE'],['settings','Settings']]}
+    {label:'Overview',items:[['home','Home',HomeIcon],['pricing','Plans',CreditCard]]},
+    {label:'Placements',items:[['jobs','On-campus jobs',BriefcaseBusiness],['apply','Auto-Apply',Send],['interview','Interview AI',Mic2]]},
+    {label:'Academics',items:[['timetable','Timetable',CalendarDays],['attendance','Attendance',ChartNoAxesCombined],['class_recommendations','Class priorities',BookOpenCheck]]},
+    {label:'Growth plan',items:[['semester','Semester plan',Route],['progress','Daily progress',ListChecks],['activity','Activity planner',Activity]]},
+    {label:'Pending work',items:[['assignments','Assignments',ClipboardCheck],['fees','Fees',WalletCards]]},
+    {label:'Exam prep',items:[['exam','Quick Notes',LibraryBig],['study','Study AI',Headphones],['library','Cue-card library',GraduationCap]]},
+    {label:'Exposure',items:[['internships','Internships',Telescope],['workshops','Workshops',Presentation],['research','Faculty projects',FlaskConical],['networking','Industry network',Network]]},
+    {label:'SAGE',items:[['ask','Ask SAGE',Sparkles],['settings','Account',UserRound]]}
   ]
 
   return (
-    <CampusProvider><div className="flex h-full min-w-[60rem]">
-      <aside className="relative flex w-56 shrink-0 flex-col bg-card/75 shadow-[var(--shadow-rail)]">
-        <div className="drag px-5 pb-6 pt-9"><div className="no-drag"><Brand /></div></div>
-        <nav className="min-h-0 flex-1 overflow-y-auto px-3" aria-label="Primary">
-          {groups.map(group=><details key={group.label} open className="mb-2"><summary className="cursor-pointer px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{group.label}</summary>{group.items.map(([id,label])=><button key={id} onClick={()=>setView(id)} aria-current={view===id?'page':undefined} className={cn('flex w-full items-center rounded-lg px-3 py-2 text-left text-sm no-drag',view===id?'bg-secondary font-bold':'text-muted-foreground hover:bg-secondary/70')}>{label}{id==='apply'&&agentBusy>0&&<Badge className="ml-auto">{agentBusy}</Badge>}</button>)}</details>)}
+    <CampusProvider><div className="app-frame flex h-full min-w-[60rem]">
+      <aside className="nav-rail relative flex w-[17rem] shrink-0 flex-col shadow-[var(--shadow-rail)]">
+        <div className="drag px-5 pb-4 pt-9">
+          <div className="no-drag"><Brand /></div>
+          <div className="mt-5 flex items-center gap-2 rounded-xl bg-white/[0.055] px-3 py-2.5 text-xs text-white/70">
+            <Landmark className="h-3.5 w-3.5 text-primary" /> BITSoM · MBA 2026
+          </div>
+        </div>
+        <nav className="min-h-0 flex-1 overflow-y-auto px-3 pb-3" aria-label="Primary">
+          {groups.map((group)=><details key={group.label} className="nav-group" open={group.items.some(([id])=>id===view) || openGroups.includes(group.label)} onToggle={(event)=>{
+            const isOpen=event.currentTarget.open
+            setOpenGroups((current)=>isOpen?[...new Set([...current,group.label])]:current.filter((label)=>label!==group.label))
+          }}>
+            <summary><span>{group.label}</span><ChevronDown className="h-3.5 w-3.5 transition-transform" /></summary>
+            <div className="space-y-0.5 pb-2">{group.items.map(([id,label,Icon])=><button key={id as string} onClick={()=>setView(id as string)} aria-current={view===id?'page':undefined} className={cn('nav-item no-drag',view===id&&'is-active')}>
+              <Icon className="h-[1.05rem] w-[1.05rem] shrink-0" />
+              <span className="min-w-0 flex-1 truncate">{label as string}</span>
+              {id==='apply'&&agentBusy>0&&<Badge className="ml-auto">{agentBusy}</Badge>}
+            </button>)}</div>
+          </details>)}
         </nav>
-        <div className="mt-auto space-y-3 p-3">
+        <div className="mt-auto space-y-3 border-t border-white/[0.07] p-3">
           {checkpoints.length > 0 && (
             <button onClick={() => setView('apply')} className="flex w-full items-center gap-2 rounded-[var(--radius-input)] bg-warning/15 px-3 py-3 text-left text-xs font-semibold text-warning no-drag">
               <span className="relative flex h-2 w-2 shrink-0"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-warning opacity-50" /><span className="relative inline-flex h-2 w-2 rounded-full bg-warning" /></span>
               {checkpoints.length} application step{checkpoints.length > 1 ? 's' : ''} need you
             </button>
           )}
-          <div className="rounded-[var(--radius-input)] bg-background/55 p-3 text-[11px]">
-            <div className="truncate font-semibold">{me?.user.full_name ?? me?.user.email}</div>
-            <div className="truncate text-muted-foreground">{me?.subscription?.plan_name ?? '—'}{auth.dev ? ' · DEV' : ''}</div>
+          <div className="account-dock flex items-center gap-3 rounded-xl p-3 text-[11px]">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/20 font-bold text-primary">{(me?.user.full_name ?? me?.user.email ?? 'S').slice(0,1).toUpperCase()}</div>
+            <div className="min-w-0 flex-1"><div className="truncate font-semibold text-white">{me?.user.full_name ?? me?.user.email}</div>
+            <div className="truncate text-white/45">{me?.subscription?.plan_name ?? '—'}{auth.dev ? ' · DEV' : ''}</div></div>
+            <SettingsIcon className="h-3.5 w-3.5 text-white/35" />
           </div>
-          <p className="mono px-1 text-[9px] leading-relaxed text-muted-foreground/55">SAGE AI DESKTOP 1.0.0<br />AUTO-APPLY RUNS LOCALLY</p>
+          <p className="mono px-1 text-[9px] leading-relaxed text-white/25">SAGE AI DESKTOP 1.0.0<br />AUTO-APPLY RUNS LOCALLY</p>
         </div>
       </aside>
 
-      <main className="relative flex-1 overflow-hidden">
+      <main className="app-canvas relative min-w-0 flex-1 overflow-hidden">
         <div className="drag absolute inset-x-0 top-0 z-10 h-9" />
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={view} className="h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}

@@ -10,8 +10,8 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export function Button({ className, variant = 'default', size = 'md', loading = false, children, ...props }: ButtonProps) {
   const variants: Record<NonNullable<ButtonProps['variant']>, string> = {
-    default: 'bg-primary text-primary-foreground shadow-[0_10px_28px_oklch(var(--primary)/0.18)] hover:brightness-105',
-    outline: 'bg-card text-foreground shadow-[inset_0_0_0_1px_oklch(var(--border))] hover:bg-secondary',
+    default: 'bg-primary text-primary-foreground shadow-[0_10px_26px_oklch(var(--primary)/0.2)] hover:-translate-y-0.5 hover:shadow-[0_14px_32px_oklch(var(--primary)/0.24)]',
+    outline: 'border border-border bg-card text-foreground shadow-sm hover:-translate-y-0.5 hover:border-primary/30 hover:bg-secondary/70',
     ghost: 'text-muted-foreground hover:bg-secondary hover:text-foreground',
     subtle: 'bg-secondary text-secondary-foreground hover:brightness-105',
     success: 'bg-success text-white hover:brightness-105',
@@ -26,7 +26,7 @@ export function Button({ className, variant = 'default', size = 'md', loading = 
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-input)] font-semibold transition-[transform,opacity,background-color,color,box-shadow] duration-[var(--dur-short)] ease-[var(--ease-out)] no-drag',
+        'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-input)] font-bold transition-[transform,opacity,background-color,color,box-shadow,border-color] duration-[var(--dur-short)] ease-[var(--ease-out)] no-drag',
         'active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         variants[variant],
         sizes[size],
@@ -43,7 +43,7 @@ export function Button({ className, variant = 'default', size = 'md', loading = 
 }
 
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('rounded-[var(--radius-card)] bg-card text-card-foreground shadow-[var(--shadow-card)]', className)} {...props} />
+  return <div className={cn('rounded-[var(--radius-card)] border border-border/70 bg-card text-card-foreground shadow-[var(--shadow-card)]', className)} {...props} />
 }
 
 export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
@@ -51,7 +51,7 @@ export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTML
     <input
       ref={ref}
       className={cn(
-        'h-10 w-full rounded-[var(--radius-input)] bg-background px-3 text-sm shadow-[inset_0_0_0_1px_oklch(var(--input))] transition-[box-shadow,background-color] duration-[var(--dur-short)] no-drag',
+        'h-11 w-full rounded-[var(--radius-input)] border border-input bg-card px-3.5 text-sm shadow-sm transition-[box-shadow,background-color,border-color] duration-[var(--dur-short)] no-drag',
         'placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-destructive',
         className
       )}
@@ -82,7 +82,7 @@ export function Select({
     <select
       value={value}
       className={cn(
-        'h-10 w-full rounded-[var(--radius-input)] bg-background px-3 text-sm shadow-[inset_0_0_0_1px_oklch(var(--input))] transition-[box-shadow,background-color] duration-[var(--dur-short)] no-drag',
+        'h-11 w-full rounded-[var(--radius-input)] border border-input bg-card px-3.5 text-sm shadow-sm transition-[box-shadow,background-color,border-color] duration-[var(--dur-short)] no-drag',
         'disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-destructive',
         className
       )}
@@ -97,7 +97,7 @@ export function Textarea({ className, ...props }: React.TextareaHTMLAttributes<H
   return (
     <textarea
       className={cn(
-        'w-full rounded-[var(--radius-input)] bg-background px-3 py-2 text-sm shadow-[inset_0_0_0_1px_oklch(var(--input))] no-drag',
+        'w-full rounded-[var(--radius-input)] border border-input bg-card px-3.5 py-3 text-sm shadow-sm no-drag',
         'placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-destructive',
         className
       )}
@@ -109,7 +109,7 @@ export function Textarea({ className, ...props }: React.TextareaHTMLAttributes<H
 export function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <label className="flex min-w-0 flex-col gap-1.5">
-      <span className="text-xs font-semibold text-muted-foreground">{label}</span>
+      <span className="text-xs font-bold text-foreground/75">{label}</span>
       {children}
       {hint && <span className="text-[11px] leading-relaxed text-muted-foreground/80">{hint}</span>}
     </label>

@@ -1,0 +1,9 @@
+{
+  "scanned_at": "2026-09-26",
+  "framework": "React 18 + Electron Vite + Tailwind CSS 3",
+  "fonts": ["Manrope Variable", "JetBrains Mono Variable"],
+  "palette": "OKLCH variables in tokens.css",
+  "motion": "Framer Motion with reduced-motion support",
+  "spacing": "4-point semantic scale",
+  "design_system": "design.md"
+}

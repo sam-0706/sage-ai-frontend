@@ -444,12 +444,13 @@ export function Page({ title, subtitle, back, actions, children }: {
 }) {
   return (
     <div className="h-full overflow-y-auto">
-      <div className="mx-auto max-w-5xl space-y-6 px-8 pb-12 pt-12">
-        <header className="flex items-start justify-between gap-4">
+      <div className="mx-auto max-w-6xl space-y-6 px-7 pb-12 pt-12 xl:px-10">
+        <header className="flex items-end justify-between gap-6 border-b border-border/80 pb-6">
           <div className="min-w-0">
             {back && <button onClick={back} className="mb-2 flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground no-drag"><ArrowLeft className="h-3.5 w-3.5" /> Back</button>}
-            <h1 className="text-[length:var(--text-display,2rem)] font-bold leading-tight">{title}</h1>
-            {subtitle && <p className="mt-1 whitespace-normal text-sm text-muted-foreground">{subtitle}</p>}
+            <p className="page-kicker"><span className="eyebrow-dot"/>Focused workspace</p>
+            <h1 className="mt-3 text-[length:var(--text-display,2rem)] font-bold leading-[1.05]">{title}</h1>
+            {subtitle && <p className="mt-2 whitespace-normal text-sm text-muted-foreground">{subtitle}</p>}
           </div>
           {actions && <div className="flex shrink-0 gap-2">{actions}</div>}
         </header>
@@ -490,4 +491,3 @@ export function ScoreRing({ score, size = 96 }: { score: number; size?: number }
     </svg>
   )
 }
-

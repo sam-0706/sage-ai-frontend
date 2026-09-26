@@ -1,6 +1,6 @@
-/* Hallmark · genre: atmospheric · macrostructure: Workbench · theme: Midnight
- * design-system: design.md · designed-as-app · nav: N3 side-rail · footer: Ft4 colophon
- * pre-emit critique: P5 H5 E4 S5 R5 V4 · contrast: pass · slop: pass
+/* Hallmark · genre: modern-editorial · macrostructure: Student command center · theme: SAGE Daylight
+ * design-system: design.md · designed-as-app · nav: ink side-rail · footer: account dock
+ * pre-emit critique: P5 H5 E5 S5 R5 V5 · contrast: pass · slop: pass
  */
 :root,
 [data-theme='dark'] {
@@ -21,6 +21,10 @@
   --color-success: oklch(72% 0.15 153);
   --color-warning: oklch(80% 0.16 77);
   --color-danger: oklch(68% 0.2 25);
+  --color-info: oklch(74% 0.13 225);
+  --color-rail: oklch(12% 0.035 278);
+  --color-rail-2: oklch(18% 0.045 278);
+  --color-rail-ink: oklch(96% 0.01 275);
 
   --background: 14% 0.02 278;
   --foreground: 96% 0.01 275;
@@ -48,38 +52,42 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  --color-paper: oklch(98% 0.006 275);
-  --color-paper-2: oklch(96% 0.01 275);
-  --color-paper-3: oklch(92% 0.018 275);
-  --color-ink: oklch(20% 0.025 278);
-  --color-ink-2: oklch(36% 0.026 278);
-  --color-rule: oklch(86% 0.018 275);
-  --color-rule-2: oklch(76% 0.024 275);
-  --color-muted: oklch(50% 0.025 275);
+  --color-paper: oklch(98% 0.008 95);
+  --color-paper-2: oklch(96% 0.012 92);
+  --color-paper-3: oklch(92% 0.022 288);
+  --color-ink: oklch(19% 0.035 278);
+  --color-ink-2: oklch(38% 0.032 278);
+  --color-rule: oklch(89% 0.018 285);
+  --color-rule-2: oklch(78% 0.032 282);
+  --color-muted: oklch(51% 0.025 278);
   --color-neutral: oklch(62% 0.022 275);
-  --color-accent: oklch(56% 0.2 295);
+  --color-accent: oklch(57% 0.22 292);
   --color-accent-ink: oklch(99% 0.004 295);
   --color-focus: oklch(52% 0.21 295);
   --color-success: oklch(51% 0.15 153);
   --color-warning: oklch(59% 0.16 70);
   --color-danger: oklch(57% 0.2 25);
+  --color-info: oklch(56% 0.14 231);
+  --color-rail: oklch(14% 0.04 278);
+  --color-rail-2: oklch(20% 0.052 278);
+  --color-rail-ink: oklch(97% 0.01 275);
 
-  --background: 98% 0.006 275;
-  --foreground: 20% 0.025 278;
-  --card: 99% 0.004 275;
-  --card-foreground: 20% 0.025 278;
-  --popover: 99% 0.004 275;
-  --popover-foreground: 20% 0.025 278;
-  --primary: 56% 0.2 295;
+  --background: 98% 0.008 95;
+  --foreground: 19% 0.035 278;
+  --card: 100% 0 0;
+  --card-foreground: 19% 0.035 278;
+  --popover: 100% 0 0;
+  --popover-foreground: 19% 0.035 278;
+  --primary: 57% 0.22 292;
   --primary-foreground: 99% 0.004 295;
-  --secondary: 92% 0.018 275;
-  --secondary-foreground: 26% 0.025 278;
-  --muted: 94% 0.014 275;
-  --muted-foreground: 50% 0.025 275;
-  --accent: 91% 0.04 292;
+  --secondary: 94% 0.022 288;
+  --secondary-foreground: 25% 0.035 278;
+  --muted: 95% 0.014 95;
+  --muted-foreground: 51% 0.025 278;
+  --accent: 91% 0.05 292;
   --accent-foreground: 33% 0.12 292;
-  --border: 86% 0.018 275;
-  --input: 82% 0.022 275;
+  --border: 89% 0.018 285;
+  --input: 82% 0.03 282;
   --ring: 52% 0.21 295;
   --success: 51% 0.15 153;
   --warning: 59% 0.16 70;
@@ -91,7 +99,7 @@
   --font-display: 'Manrope Variable', 'Avenir Next', ui-sans-serif, sans-serif;
   --font-body: 'Manrope Variable', 'Avenir Next', ui-sans-serif, sans-serif;
   --font-outlier: 'JetBrains Mono Variable', ui-monospace, monospace;
-  --display-weight: 700;
+  --display-weight: 750;
   --display-style: normal;
   --tracking-display: -0.035em;
   --tracking-label: 0.08em;
@@ -102,7 +110,7 @@
   --text-lg: 1.25rem;
   --text-xl: 1.563rem;
   --text-2xl: 1.953rem;
-  --text-display: clamp(2rem, 3vw, 3.25rem);
+  --text-display: clamp(2.1rem, 3vw, 3.5rem);
 
   --space-3xs: 0.25rem;
   --space-2xs: 0.5rem;
@@ -124,10 +132,10 @@
 
   --rule-hair: 1px;
   --rule-fine: 2px;
-  --radius-card: 1rem;
+  --radius-card: 1.25rem;
   --radius-pill: 999px;
-  --radius-input: 0.7rem;
-  --shadow-card: 0 20px 56px oklch(0% 0 0 / 0.2);
+  --radius-input: 0.8rem;
+  --shadow-card: 0 1px 2px oklch(20% 0.03 278 / 0.04), 0 14px 40px oklch(20% 0.03 278 / 0.07);
   --shadow-float: 0 24px 72px oklch(0% 0 0 / 0.34);
-  --shadow-rail: 12px 0 42px oklch(0% 0 0 / 0.12);
+  --shadow-rail: 14px 0 50px oklch(5% 0.03 278 / 0.16);
 }
