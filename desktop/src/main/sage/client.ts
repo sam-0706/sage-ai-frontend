@@ -110,7 +110,7 @@ export async function startSignIn(): Promise<SageAuthState> {
   const start = await sageRequestPublic<{ device_code: string; user_code: string; verification_url: string; expires_in: number; interval: number }>(
     '/v1/auth/device/start', { client: 'desktop', device_name: `SAGE Desktop · ${hostname().replace(/\.local$/, '')}`.slice(0, 80) })
   await shell.openExternal(start.verification_url)
-  const waiting: SageAuthState = { status: 'waiting', userCode: start.user_code, verificationUrl: start.verification_url }
+  const waiting: SageAuthState = { status: 'waiting', verificationUrl: start.verification_url }
   void poll(ticket, start.device_code, start.interval, Date.now() + start.expires_in * 1000)
   return waiting
 }
@@ -129,14 +129,14 @@ async function poll(ticket: { cancelled: boolean }, deviceCode: string, interval
       }
       if (r.status === 'denied' || r.status === 'expired' || r.status === 'consumed') {
         pending = null
-        authEvents.emit({ status: 'signed_out', reason: r.status === 'denied' ? 'Sign-in was denied in the browser.' : 'The sign-in code expired. Please try again.' })
+        authEvents.emit({ status: 'signed_out', reason: r.status === 'denied' ? 'Sign-in was denied in the browser.' : 'Sign-in expired. Please try again.' })
         return
       }
     } catch {
       /* transient network error — keep polling until the deadline */
     }
   }
-  if (!ticket.cancelled) authEvents.emit({ status: 'signed_out', reason: 'The sign-in code expired. Please try again.' })
+  if (!ticket.cancelled) authEvents.emit({ status: 'signed_out', reason: 'Sign-in expired. Please try again.' })
 }
 
 export function cancelSignIn(): SageAuthState {

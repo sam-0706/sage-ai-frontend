@@ -51,13 +51,10 @@ export function SignIn({ onDemo }: { onDemo: () => void }) {
         ) : waiting ? (
           <div className="mt-8 space-y-5">
             <p className="text-sm text-muted-foreground">
-              We opened your browser. Sign in with the email you joined the waitlist with, then confirm this code:
+              Finish Google sign-in in your browser. SAGE will continue automatically.
             </p>
-            <div className="mono rounded-[var(--radius-input)] bg-primary/12 py-4 text-center text-3xl font-bold tracking-[0.18em] text-primary" aria-label="Sign-in code">
-              {waiting.userCode}
-            </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground" role="status">
-              <Spinner className="h-4 w-4 text-primary" /> Waiting for approval in your browser…
+              <Spinner className="h-4 w-4 text-primary" /> Waiting for Google sign-in…
             </div>
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={() => void window.sage.openExternal(waiting.verificationUrl)}>
@@ -69,13 +66,13 @@ export function SignIn({ onDemo }: { onDemo: () => void }) {
         ) : (
           <div className="mt-8 space-y-5">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              SAGE AI is in an invite-only beta. Sign in securely with Clerk in your browser with the email you used to join the waitlist.
+              Sign in with Google to continue. New here? We’ll help you set up your goals. Returning students go straight to their dashboard.
             </p>
             {(reason || error) && (
               <p className="rounded-[var(--radius-input)] bg-destructive/10 p-3 text-sm text-destructive" role="alert">{error || reason}</p>
             )}
             <Button size="lg" className="w-full" loading={busy} onClick={start}>
-              <KeyRound className="h-4 w-4" /> Sign in with Clerk
+              <KeyRound className="h-4 w-4" /> Sign in with Google
             </Button>
             <p className="flex items-center gap-2 text-[11px] text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 text-success" /> Your session is stored in the OS keychain on this device.

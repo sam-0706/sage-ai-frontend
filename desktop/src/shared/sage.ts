@@ -2,7 +2,7 @@
 
 export type SageAuthState =
   | { status: 'signed_out'; reason?: string; code?: string }
-  | { status: 'waiting'; userCode: string; verificationUrl: string }
+  | { status: 'waiting'; verificationUrl: string }
   | { status: 'signed_in'; email: string; name?: string; dev?: boolean }
   | { status: 'offline'; reason?: string }
 

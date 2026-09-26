@@ -26,12 +26,12 @@ export function App() {
   const [editOnboarding, setEditOnboarding] = useState(false)
   const reduceMotion = useReducedMotion()
 
-  if (demoMode) return <div className="flex h-full"><aside className="flex w-56 shrink-0 flex-col gap-3 bg-card p-4 pt-10"><Brand /><Badge tone="warning">BITSoM 2026 demo</Badge><Button variant="outline" onClick={() => setView('home')}>Attendance & timetable</Button><Button variant="outline" onClick={() => setView('exam')}>Cue cards & quiz</Button><Button variant="outline" onClick={() => setView('apply')}>Real AutA data</Button><Button className="mt-auto" onClick={() => setDemoMode(false)}>Clerk sign-in</Button></aside><main className="min-w-0 flex-1">{view === 'exam' ? <BitsomPrep /> : view === 'apply' ? <AutoApply /> : <div className="h-full overflow-auto p-8 pt-12"><Academics /></div>}</main></div>
+  if (demoMode) return <div className="flex h-full"><aside className="flex w-56 shrink-0 flex-col gap-3 bg-card p-4 pt-10"><Brand /><Badge tone="warning">BITSoM 2026 demo</Badge><Button variant="outline" onClick={() => setView('home')}>Attendance & timetable</Button><Button variant="outline" onClick={() => setView('exam')}>Cue cards & quiz</Button><Button variant="outline" onClick={() => setView('apply')}>Real AutA data</Button><Button className="mt-auto" onClick={() => setDemoMode(false)}>Sign in with Google</Button></aside><main className="min-w-0 flex-1">{view === 'exam' ? <BitsomPrep /> : view === 'apply' ? <AutoApply /> : <div className="h-full overflow-auto p-8 pt-12"><Academics /></div>}</main></div>
   if (!auth || !ready || (auth.status === 'signed_in' && (me === null || onboarded === null))) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3">
         <BrandMark size="lg" />
-        {loadingError ? <><p role="alert" className="max-w-md text-sm text-destructive">{loadingError}</p><Button onClick={() => void refreshMe()}>Retry account loading</Button><Button variant="outline" onClick={async () => setAuth(await window.sage.signOut())}>Return to Clerk sign-in</Button></> : <><Spinner className="h-5 w-5 text-primary" /><p className="text-sm text-muted-foreground">Loading your account…</p></>}
+        {loadingError ? <><p role="alert" className="max-w-md text-sm text-destructive">{loadingError}</p><Button onClick={() => void refreshMe()}>Retry account loading</Button><Button variant="outline" onClick={async () => setAuth(await window.sage.signOut())}>Return to sign-in</Button></> : <><Spinner className="h-5 w-5 text-primary" /><p className="text-sm text-muted-foreground">Loading your account…</p></>}
       </div>
     )
   }
