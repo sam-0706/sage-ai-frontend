@@ -1,3 +1,4 @@
+import { hasVisibleSubmissionReceipt } from './submissionReceipt'
 import { type BrowserContext, type Page, type Locator } from 'playwright'
 import { writeFileSync } from 'fs'
 import { join } from 'path'
@@ -1855,28 +1856,7 @@ async function verifySubmitted(page: Page): Promise<boolean> {
     if (/(^|[\/_?&=#-])(thank-?you|thanks|application-(submitted|success|complete)|confirmation|submitted|completed|success)([\/_?&=#.-]|$)/.test(route)) {
       return true
     }
-    return await page.evaluate(() => {
-      const visible = (element: Element): boolean => {
-        const rect = element.getBoundingClientRect()
-        const style = getComputedStyle(element)
-        return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden'
-      }
-      const successText =
-        /your application (was |has been )?(successfully )?(submitted|received)|application (successfully )?(submitted|received)|thank you for (applying|your application)|thanks for applying|we('| ha)ve received your application/i
-      // Confirmation copy must be in a visible status/banner/heading-sized
-      // region. Never scan the entire job description: it may discuss a
-      // candidate whose work was "successfully applied" and is not a receipt.
-      const candidates = Array.from(
-        document.querySelectorAll(
-          '[role="alert"], [role="status"], [class*="success" i], [class*="confirmation" i], [data-testid*="success" i], main h1, main h2, main h3, body > h1, body > h2, h1, [role="heading"]'
-        )
-      )
-      return candidates.some((element) => {
-        if (!visible(element)) return false
-        const text = (element.textContent || '').replace(/\s+/g, ' ').trim()
-        return text.length <= 800 && successText.test(text)
-      })
-    })
+    return await page.evaluate(hasVisibleSubmissionReceipt)
   } catch {
     return false
   }

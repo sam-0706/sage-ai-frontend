@@ -53,7 +53,7 @@ export function App() {
     {label:'Growth plan',items:[['semester','Semester plan',Route],['progress','Daily progress',ListChecks],['activity','Activity planner',Activity]]},
     {label:'Pending work',items:[['assignments','Assignments',ClipboardCheck],['fees','Fees',WalletCards]]},
     {label:'Exam prep',items:[['exam','Quick Notes',LibraryBig],['study','Study AI',Headphones],['library','Cue-card library',GraduationCap]]},
-    {label:'Exposure',items:[['internships','Internships',Telescope],['workshops','Workshops',Presentation],['research','Faculty projects',FlaskConical],['networking','Industry network',Network]]},
+    {label:'Exposure',items:[['internships','Internships',Telescope],['workshops','Workshops',Presentation],['clubs','BITSoM clubs',Network],['research','Faculty projects',FlaskConical],['networking','Industry network',Network]]},
     {label:'SAGE',items:[['ask','Ask SAGE',Sparkles],['settings','Account',UserRound]]}
   ]
 
