@@ -1,5 +1,6 @@
+import Landing from './Landing.jsx'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AuthenticateWithRedirectCallback, useAuth, useClerk, useSignIn } from '@clerk/react'
+import { AuthenticateWithRedirectCallback, useAuth, useClerk } from '@clerk/react'
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force'
 import { Activity, ArrowRight, BadgeIndianRupee, BookOpen, BookOpenCheck, BriefcaseBusiness, CalendarDays, Check, ChevronDown, ChevronRight, ClipboardCheck, Command, CreditCard, ExternalLink, FlaskConical, GraduationCap, Headphones, LayoutDashboard, ListChecks, LoaderCircle, LogOut, Menu, Mic2, Network, Presentation, Route as RouteIcon, Search, Send, Settings, Sparkles, Target, Telescope, Users, WalletCards, X, Zap } from 'lucide-react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
@@ -38,53 +39,6 @@ function useSage() {
 
 function Brand({ compact=false }) {
   return <div className={`brand ${compact?'brand--compact':''}`}><span className="brand-mark"><Sparkles size={19}/></span><span>SAGE</span>{!compact&&<small>move with clarity</small>}</div>
-}
-
-function GoogleIcon() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.6h3.3c1.9-1.8 2.9-4.4 2.9-7.5Z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.7-2.3l-3.3-2.6c-.9.6-2.1 1-3.4 1a5.9 5.9 0 0 1-5.5-4.1H3.1v2.6A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.5 14a6 6 0 0 1 0-3.9V7.4H3.1a10 10 0 0 0 0 9.2L6.5 14Z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.9 1.5l2.9-2.8A9.7 9.7 0 0 0 3.1 7.4l3.4 2.7A5.9 5.9 0 0 1 12 6Z"/></svg>
-}
-
-function Landing() {
-  const { signIn } = useSignIn()
-  const [busy,setBusy] = useState(false)
-  const startGoogle = async () => {
-    if (!signIn) return
-    setBusy(true)
-    await signIn.authenticateWithRedirect({ strategy:'oauth_google', redirectUrl:'/sso-callback', redirectUrlComplete:'/' })
-  }
-  return <main className="landing">
-    <header className="public-nav"><Brand/><button className="text-button" onClick={startGoogle}>Sign in <ArrowRight size={16}/></button></header>
-    <section className="hero">
-      <div className="hero-copy">
-        <p className="eyebrow"><span/>Your ambition, operationalised</p>
-        <h1>Know what<br/>moves you<br/><em>forward.</em></h1>
-        <p className="hero-lede">SAGE connects your goals, classes, skills and real opportunities—then gives you the next move that matters.</p>
-        <button className="google-button" disabled={busy||!signIn} onClick={startGoogle}>{busy?<LoaderCircle className="spin"/>:<GoogleIcon/>}<span>Continue with Google</span><ArrowRight size={18}/></button>
-        <p className="microcopy">One sign-in. New members set up their path; returning members go straight home.</p>
-      </div>
-      <RouteCanvas/>
-    </section>
-    <section className="manifesto"><p>Built for the space between</p><h2>“I know what I want”<br/><span>and</span> “I know what to do today.”</h2></section>
-    <section className="story-strip">
-      <article><b>01</b><h3>See the whole picture</h3><p>Academics, attendance, applications and growth signals in one view.</p></article>
-      <article><b>02</b><h3>Find real openings</h3><p>Live web research ranks five roles against your goals, proof and gaps.</p></article>
-      <article><b>03</b><h3>Build useful momentum</h3><p>A daily plan turns ambition into work you can finish and show.</p></article>
-    </section>
-    <footer><Brand compact/><p>Strategic Action & Growth Engine</p><p>© {new Date().getFullYear()} SAGE</p></footer>
-  </main>
-}
-
-function RouteCanvas() {
-  return <div className="route-canvas" aria-label="A route connecting learning, people and opportunities">
-    <div className="route-note">Your route · this week</div>
-    <svg viewBox="0 0 620 620" role="img"><path className="route-line" d="M86 525 C150 430 90 335 205 290 S310 130 407 178 S520 277 530 83"/><path className="route-ghost" d="M90 525 C230 510 309 440 336 343 S420 269 530 83"/></svg>
-    <div className="map-node node-you"><span>SK</span><strong>You</strong><small>high agency</small></div>
-    <div className="map-node node-skill"><Zap/><strong>Applied AI</strong><small>skill to compound</small></div>
-    <div className="map-node node-class"><BookOpen/><strong>Marketing</strong><small>today · 11:00</small></div>
-    <div className="map-node node-role"><BriefcaseBusiness/><strong>5 role matches</strong><small>searched today</small></div>
-    <div className="map-node node-person"><Users/><strong>Operator circle</strong><small>3 warm paths</small></div>
-    <div className="route-stat"><b>73%</b><span>path readiness</span></div>
-  </div>
 }
 
 function AuthGate() {
