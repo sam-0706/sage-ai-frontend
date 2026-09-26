@@ -1,5 +1,5 @@
 import LiveExposure from './LiveExposure.jsx'
-import { liveSearch } from './liveSearch.js'
+import { liveSearch, readSearch } from './liveSearch.js'
 import Landing from './Landing.jsx'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AuthenticateWithRedirectCallback, useAuth, useClerk } from '@clerk/react'
@@ -117,7 +117,7 @@ function PanelLoader({label}){return <div className="panel-loader"><LoaderCircle
 function Opportunities({sage}) {
   const [filters,setFilters]=useState({role:'',location:'Mumbai, Bengaluru or remote India',work_mode:'any'})
   const searchFilters=useRef(filters)
-  const [state,setState]=useState({busy:false,items:sage.preview?sampleJobs:[],meta:null,error:null})
+  const [state,setState]=useState(()=>{const saved=readSearch(sage.userId,'jobs',filters)?.data;return {busy:false,items:saved?.items||(sage.preview?sampleJobs:[]),meta:saved||null,error:null}})
   const discover=useCallback(async(force=false,body=searchFilters.current)=>{searchFilters.current=body;setState(s=>({...s,busy:true,error:null}));try{if(sage.preview){await new Promise(r=>setTimeout(r,900));setState({busy:false,items:sampleJobs,meta:{summary:'Three strong matches selected from current profile signals.',searched_at:new Date().toISOString()},error:null})}else{const data=await liveSearch(sage.client,sage.userId,'jobs',body,force);setState({busy:false,items:data.items,meta:data,error:null})}}catch(error){setState(s=>({...s,busy:false,error}))}},[sage.client,sage.userId,sage.preview])
   useEffect(()=>{void discover();const timer=setInterval(()=>{if(document.visibilityState==='visible')void discover()},30*60*1000);return()=>clearInterval(timer)},[discover])
   return <><PageHead kicker="Opportunity intelligence" title="Five roles worth your attention." copy="Live market jobs matched to your profile. Sources refresh every 30 minutes while open; these are not confirmed campus placements." action={<button className="primary" onClick={()=>discover(true,filters)} disabled={state.busy}>{state.busy?<LoaderCircle className="spin"/>:<Search/>}{state.busy?'Searching the live web…':'Find my 5 roles'}</button>}/>
@@ -125,7 +125,7 @@ function Opportunities({sage}) {
     {state.error&&<div className="inline-error">{state.error.message}</div>}
     {state.busy&&<SearchProgress/>}
     {!state.busy&&!state.items.length&&<EmptyJobs onClick={discover}/>} 
-    {!state.busy&&state.items.length>0&&<section className="job-list"><div className="job-list-head"><p>{state.meta?.summary||'Profile-fit shortlist'}</p><span>{state.meta?.searched_at?`Updated ${new Date(state.meta.searched_at).toLocaleString('en-IN')}`:'Ready to refresh from the live web'}</span></div>{state.items.map((job,i)=><JobCard key={`${job.company}-${job.title}`} job={job} rank={i+1}/>)}</section>}
+    {state.items.length>0&&<section className="job-list"><div className="job-list-head"><p>{state.meta?.summary||'Profile-fit shortlist'}</p><span>{state.meta?.searched_at?`Updated ${new Date(state.meta.searched_at).toLocaleString('en-IN')}`:'Ready to refresh from the live web'}</span></div>{state.items.map((job,i)=><JobCard key={`${job.company}-${job.title}`} job={job} rank={i+1}/>)}</section>}
   </>
 }
 
